@@ -10,12 +10,12 @@ export default () => {
     };
 
     return (
-        <div>
+        <>
             <Button variant="contained" color="secondary" onClick={() => {
                 counterFunc({counter: (state.counter || 0) + 1});
             }}>
                 {state.counter}
             </Button>
-        </div>
+        </>
     );
 }

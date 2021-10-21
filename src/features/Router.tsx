@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-interface RouterProps {
+export interface RouterProps {
     routes: Array<Route>
 }
 
-interface Route {
+export interface Route {
     name: string,
     component: React.ReactNode
 }
