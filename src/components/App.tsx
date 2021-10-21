@@ -13,8 +13,6 @@ const theme = createTheme({
 
 function App() {
 
-    const [count, setCount] = useState(0);
-
     return (
         <div className="App">
             <ThemeProvider theme={theme}>
