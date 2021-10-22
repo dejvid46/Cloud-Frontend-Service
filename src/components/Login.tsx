@@ -23,7 +23,7 @@ export default () => {
                 <Paper>
                     <Container max-width="500px">
                         <Typography style={{margin: "20px"}} variant="h4">Login</Typography>
-                        <TextField fullWidth margin="normal" id="outlined-basic" label="Email" variant="outlined" />
+                        <TextField fullWidth margin="normal" id="outlined-basic" label="Email" type="email" variant="outlined" />
                         <br />
                         <TextField fullWidth margin="normal" id="outlined-basic" label="Password" type="password" variant="outlined" />
                         <br />
