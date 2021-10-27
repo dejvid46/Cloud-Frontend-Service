@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
 
 export default () => {

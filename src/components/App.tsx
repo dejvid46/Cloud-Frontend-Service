@@ -1,8 +1,8 @@
-import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { GlobalStateProvider } from "../features/GlobalState";
 import Router from '../features/Router';
 import routes from '../routes/mainRoutes';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const theme = createTheme({
     palette: {
