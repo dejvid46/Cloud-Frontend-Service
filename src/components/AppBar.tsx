@@ -10,8 +10,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default () => {
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar color="secondary" position="static">
+        <>
+            <AppBar color="secondary" position="fixed" sx={{ flexGrow: 1, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                 <Toolbar>
 
                     <IconButton
@@ -41,6 +41,6 @@ export default () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-        </Box>
+        </>
     )
 }
