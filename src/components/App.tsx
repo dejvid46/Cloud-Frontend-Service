@@ -18,11 +18,11 @@ function App() {
     return (
         <div className="App">
             <CssBaseline/>
-            <ThemeProvider theme={theme}>
-                <RecoilRoot>
-                    <Router routes={routes} />
-                </RecoilRoot>
-            </ThemeProvider>
+            <RecoilRoot>
+                <ThemeProvider theme={theme}>
+                        <Router routes={routes} />
+                </ThemeProvider>
+            </RecoilRoot>
         </div>
     );
 }

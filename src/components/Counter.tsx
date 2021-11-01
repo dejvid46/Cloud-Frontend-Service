@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { useRecoilState } from 'recoil';
 import { counter as counterState } from '../features/Atoms';
 

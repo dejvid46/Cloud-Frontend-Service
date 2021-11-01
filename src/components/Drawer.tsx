@@ -8,13 +8,17 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
+import { drawer as drawerState } from '../features/Atoms';
+import { useRecoilState } from 'recoil';
+import FileTree from './FileTree';
 
 const drawerWidth = 240;
 
-interface DrawerProps extends React.HTMLProps<HTMLDivElement> {
-}
+interface DrawerProps extends React.HTMLProps<HTMLDivElement> {};
 
 export default () => {
+
+    const [drawer, setDrawer] = useRecoilState(drawerState);
 
     const MyDrawer = ({children}: DrawerProps) => (
         <>
@@ -30,8 +34,8 @@ export default () => {
                 {children}
             </Drawer>
             <Drawer
-                open={true}
-                onClose={() => console.log("bibu")}
+                open={drawer}
+                onClose={() => setDrawer(!drawer)}
                 sx={{
                     width: drawerWidth,
                     display: { xs: 'block', sm: 'none' },
@@ -60,16 +64,7 @@ export default () => {
                         ))}
                     </List>
                     <Divider />
-                    <List>
-                        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
-                    </List>
+                    <FileTree />
                 </Box>
             </MyDrawer>
         </>

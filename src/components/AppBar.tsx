@@ -7,8 +7,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import FilterDramaIcon from '@mui/icons-material/FilterDrama';
 import SearchBar from './SearchBar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { drawer as drawerState } from '../features/Atoms';
+import { useRecoilState } from 'recoil';
+
 
 export default () => {
+
+    const [drawer, setDrawer] = useRecoilState(drawerState);
+
     return (
         <>
             <AppBar color="secondary" position="fixed" sx={{ flexGrow: 1, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -20,6 +26,7 @@ export default () => {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
+                        onClick={() => setDrawer(!drawer)}
                     >
                         <MenuIcon />
                     </IconButton>
