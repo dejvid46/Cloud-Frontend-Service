@@ -17,6 +17,8 @@ export default () => {
 
             {/* Lorem  ----------------------------------------------------*/}
             <Counter />
+            <Counter />
+
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
                 <Typography paragraph>

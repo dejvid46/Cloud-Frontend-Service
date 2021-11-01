@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import { useGlobalState, GlobalStateInterface } from "../features/GlobalState";
+import { useRecoilState } from 'recoil';
+import { counter as counterState } from '../features/Atoms';
 
 export default () => {
-    const { state, setState } = useGlobalState();
-    
-    const counterFunc = (data: Partial<GlobalStateInterface>) => {
-        setState((prev) => ({ ...prev, ...data }));
-    };
+    const [counter, setCounter] = useRecoilState(counterState);
 
     return (
         <>
             <Button variant="contained" color="secondary" onClick={() => {
-                counterFunc({counter: (state.counter || 0) + 1});
+                setCounter(counter + 1)
             }}>
-                {state.counter}
+                {counter}
             </Button>
         </>
     );

@@ -1,8 +1,8 @@
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { GlobalStateProvider } from "../features/GlobalState";
 import Router from '../features/Router';
 import routes from '../routes/mainRoutes';
 import CssBaseline from '@mui/material/CssBaseline';
+import { RecoilRoot } from 'recoil';
 
 const theme = createTheme({
     palette: {
@@ -19,9 +19,9 @@ function App() {
         <div className="App">
             <CssBaseline/>
             <ThemeProvider theme={theme}>
-                <GlobalStateProvider>
+                <RecoilRoot>
                     <Router routes={routes} />
-                </GlobalStateProvider>
+                </RecoilRoot>
             </ThemeProvider>
         </div>
     );
