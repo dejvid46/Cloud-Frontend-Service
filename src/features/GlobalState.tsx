@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, Dispatch, SetStateAction } 
 
 export interface GlobalStateInterface {
     counter: number;
+    drawer: boolean;
 }
 
 const GlobalStateContext = createContext({

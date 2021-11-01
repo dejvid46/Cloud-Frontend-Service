@@ -11,8 +11,12 @@ import Box from '@mui/material/Box';
 
 const drawerWidth = 240;
 
+interface DrawerProps extends React.HTMLProps<HTMLDivElement> {
+}
+
 export default () => {
-    return (
+
+    const MyDrawer = ({children}: DrawerProps) => (
         <>
             <Drawer
                 variant="permanent"
@@ -23,6 +27,26 @@ export default () => {
                     [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
                 }}
             >
+                {children}
+            </Drawer>
+            <Drawer
+                open={true}
+                onClose={() => console.log("bibu")}
+                sx={{
+                    width: drawerWidth,
+                    display: { xs: 'block', sm: 'none' },
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                }}
+            >
+                {children}
+            </Drawer>
+        </>
+    );
+
+    return (
+        <>
+            <MyDrawer>
                 <Toolbar />
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
@@ -47,7 +71,7 @@ export default () => {
                         ))}
                     </List>
                 </Box>
-            </Drawer>
+            </MyDrawer>
         </>
     )
 }

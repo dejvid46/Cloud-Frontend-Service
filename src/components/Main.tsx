@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Drawer from "./Drawer";
 import CssBaseline from '@mui/material/CssBaseline';
+import Counter from "./Counter";
 
 export default () => {
 
@@ -15,6 +16,7 @@ export default () => {
             <Drawer />
 
             {/* Lorem  ----------------------------------------------------*/}
+            <Counter />
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
                 <Typography paragraph>
