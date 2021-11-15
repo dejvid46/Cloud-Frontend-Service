@@ -9,6 +9,14 @@ const routes: Array<Route> = [
         component: <Main />
     },
     {
+        name: "/users",
+        component: <Main />
+    },
+    {
+        name: "/folder",
+        component: <Main />
+    },
+    {
         name: "/login",
         component: <Login />
     }
