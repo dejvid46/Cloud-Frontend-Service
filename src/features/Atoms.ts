@@ -9,3 +9,16 @@ export const drawer = atom({
     key: 'drawerState', // unique ID (with respect to other atoms/selectors)
     default: false, // default value (aka initial value)
 });
+
+export const user = atom({
+    key: 'userState',
+    default: {
+        id: 0,
+        name: "dfdh",
+        email: "",
+        pass: "",
+        size: 0,
+        path: "",
+        status: 1
+    },
+});

@@ -8,11 +8,34 @@ interface LinkProps extends React.HTMLProps<HTMLAnchorElement> {
 export default ({children, link, ...rest}: LinkProps) => {
 
 
+    const aStyle = {
+        textDecoration: "none",
+        color: "inherit",
+
+        "&:hover": {
+            textDecoration: "none",
+            color: "inherit",
+        },
+        "&:focus": {
+            textDecoration: "none",
+            color: "inherit",
+        },
+        "&:active": {
+            textDecoration: "none",
+            color: "inherit",
+        },
+      };
+
     return (
-        <a {...rest} href={link} onClick={(e) => {
+        <a {...rest} href={link} style={aStyle} onClick={(e) => {
             e.preventDefault();
             window.history.pushState({}, "", link);
             window.dispatchEvent(new Event("popstate"));
         }}>{children}</a>
     );
+}
+
+export const route = (link: string) => {
+    window.history.pushState({}, "", link);
+    window.dispatchEvent(new Event("popstate"));
 }

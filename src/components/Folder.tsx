@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 
 const columns: GridColDef[] = [
     { field: 'img', headerName: '', width: 40 },
-    { field: 'name', headerName: 'Name', type: 'string' },
+    { field: 'name', headerName: 'Name', type: 'string', minWidth: 150 },
     { field: 'modified', headerName: 'Modified', type: 'string' },
     {
         field: 'type',

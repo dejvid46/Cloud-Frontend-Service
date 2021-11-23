@@ -4,13 +4,14 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import PersonIcon from '@mui/icons-material/Person';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
-import { drawer as drawerState } from '../features/Atoms';
+import { drawer as drawerState, user as userState } from '../features/Atoms';
 import { useRecoilState } from 'recoil';
 import FileTree from './FileTree';
+import { route } from './Link';
 
 const drawerWidth = 240;
 
@@ -20,8 +21,11 @@ export default () => {
 
     const [drawer, setDrawer] = useRecoilState(drawerState);
 
+    const [user, setUser] = useRecoilState(userState);
+
     const MyDrawer = ({children}: DrawerProps) => (
         <>
+            
             <Drawer
                 variant="permanent"
                 sx={{
@@ -54,14 +58,21 @@ export default () => {
                 <Toolbar />
                 <Box sx={{ overflow: 'auto' }}>
                     <List>
-                        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
+                        {
+                            (user.status === 1 || user.status === 2) &&
+                                (<ListItem button key="user" onClick={() => route("/users")}>
+                                    <ListItemIcon>
+                                        <PeopleAltIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Users" />
+                                </ListItem>)
+                        }
+                        <ListItem button key="user">
+                            <ListItemIcon>
+                                <PersonIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={user.name} />
+                        </ListItem>
                     </List>
                     <Divider />
                     <FileTree />
