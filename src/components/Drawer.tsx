@@ -67,7 +67,7 @@ export default () => {
                                     <ListItemText primary="Users" />
                                 </ListItem>)
                         }
-                        <ListItem button key="user">
+                        <ListItem button key="neviiim">
                             <ListItemIcon>
                                 <PersonIcon />
                             </ListItemIcon>

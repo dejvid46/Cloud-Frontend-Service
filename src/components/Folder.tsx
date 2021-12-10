@@ -2,6 +2,13 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import PrintIcon from '@mui/icons-material/Print';
+import ShareIcon from '@mui/icons-material/Share';
 
 const columns: GridColDef[] = [
     { field: 'img', headerName: '', width: 40 },
@@ -53,6 +60,13 @@ const columns: GridColDef[] = [
     }
 ];
 
+const actions = [
+    { icon: <FileCopyIcon />, name: 'Copy' },
+    { icon: <SaveIcon />, name: 'Save' },
+    { icon: <PrintIcon />, name: 'Print' },
+    { icon: <ShareIcon />, name: 'Share' },
+];
+
 const rows = [
     {id: 0, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
     {id: 1, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
@@ -77,6 +91,20 @@ export default () => {
                     disableSelectionOnClick
                 />
             </div>
+
+            <SpeedDial
+                ariaLabel="SpeedDial basic example"
+                sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                icon={<SpeedDialIcon />}
+            >
+            {actions.map((action) => (
+                <SpeedDialAction
+                    key={action.name}
+                    icon={action.icon}
+                    tooltipTitle={action.name}
+                />
+            ))}
+            </SpeedDial>
         </>
     );
 }

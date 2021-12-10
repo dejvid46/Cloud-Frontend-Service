@@ -1,4 +1,6 @@
 import { atom, selector } from "recoil";
+import { User } from '../components/UserCard';
+import { apiTree } from '../components/FileTree';
 
 export const counter = atom({
     key: 'counterState', // unique ID (with respect to other atoms/selectors)
@@ -19,6 +21,16 @@ export const user = atom({
         pass: "",
         size: 0,
         path: "",
-        status: 1
+        status: 2
     },
+});
+
+export const users = atom({
+    key: 'usersState',
+    default: [{} as User],
+});
+
+export const folderTree = atom({
+    key: 'folderTreeState',
+    default: {} as apiTree,
 });

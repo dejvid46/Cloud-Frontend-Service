@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import { ImportantDevices } from 'material-ui-icons';
 import routes from '../routes/bodyRoutes';
 import Router from '../features/Router';
 
