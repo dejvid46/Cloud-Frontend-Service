@@ -73,7 +73,9 @@ const rows = [
     {id: 2, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
     {id: 3, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
     {id: 4, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 5, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 }
+    {id: 5, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 },
+    {id: 6, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 },
+    {id: 7, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 },
 
 ];
 
@@ -94,7 +96,8 @@ export default () => {
 
             <SpeedDial
                 ariaLabel="SpeedDial basic example"
-                sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                sx={{ position: 'fixed', bottom: 16, right: 16 }}
+                direction="left"
                 icon={<SpeedDialIcon />}
             >
             {actions.map((action) => (
