@@ -67,7 +67,7 @@ export default () => {
                                     <ListItemText primary="Users" />
                                 </ListItem>)
                         }
-                        <ListItem button key="neviiim">
+                        <ListItem button key="you" onClick={() => route("/edit")}>
                             <ListItemIcon>
                                 <PersonIcon />
                             </ListItemIcon>

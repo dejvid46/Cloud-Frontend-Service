@@ -19,6 +19,10 @@ const routes: Array<Route> = [
     {
         name: "/login",
         component: <Login />
+    },
+    {
+        name: "/edit",
+        component: <Main />
     }
 ];
 

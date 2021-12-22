@@ -16,11 +16,11 @@ export const user = atom({
     key: 'userState',
     default: {
         id: 0,
-        name: "dfdh",
-        email: "",
-        pass: "",
+        name: "Pipik",
+        email: "sdhgfsh",
+        pass: "dsddgs",
         size: 0,
-        path: "",
+        path: "kdsgdk",
         status: 2
     },
 });

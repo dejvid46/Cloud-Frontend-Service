@@ -10,8 +10,8 @@ import { users as usersState } from '../features/Atoms';
 const users2: User[] = [
     {
         id: 0,
-        name: "admin",
-        email: "jhdsfhfs",
+        name: "aaaaaaaaaaaaaaaa",
+        email: "pipik",
         pass: "gd",
         size: 32432,
         path: "/",
@@ -54,7 +54,7 @@ export default () => {
 
     return (
         <>
-            <Toolbar />
+            
             Folder
             <Link link="/">Link to folder</Link>
             <Box sx={{ flexGrow: 1 }}>

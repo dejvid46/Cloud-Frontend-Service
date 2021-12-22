@@ -28,6 +28,7 @@ interface UserCardProps {
 
 export default ({user, key}: UserCardProps) => {
 
+    const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
     const [pass, setPass] = useState(user.pass);
     const [size, setSize] = useState(user.size);
@@ -35,12 +36,12 @@ export default ({user, key}: UserCardProps) => {
     const [status, setStatus] = useState(user.status);
 
     const valid = () => {
+        console.log(name);
         console.log(email);
         console.log(pass);
         console.log(size);
         console.log(path);
         console.log(status);
-
     }
 
     return (
@@ -101,16 +102,17 @@ export default ({user, key}: UserCardProps) => {
                 <Modal buttonText='Edit'>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                            <TextField required defaultValue={email} id="email" label="Email" variant="standard" />
-                            <TextField required defaultValue={pass} id="pass" label="Password" variant="standard" />
-                            <TextField required defaultValue={size} id="size" label="Size" variant="standard" />
+                        <TextField required defaultValue={name} id="name" label="Name" variant="standard" onChange={e => setName(e.target.value)} />
+                            <TextField required defaultValue={email} id="email" label="Email" variant="standard" onChange={e => setEmail(e.target.value)} />
+                            <TextField required defaultValue={pass} id="pass" label="Password" variant="standard" onChange={e => setPass(e.target.value)} />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField required defaultValue={path} id="path" label="Path" variant="standard" />
-                            <TextField required defaultValue={status} id="status" label="Status" variant="standard" />
-                            <Button variant="contained" onClick={valid}></Button>
+                            <TextField required defaultValue={path} id="path" label="Path" variant="standard" onChange={e => setPath(e.target.value)} />
+                            <TextField required defaultValue={status} id="status" label="Status" variant="standard" onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} />
+                            <TextField required defaultValue={size} id="size" label="Size" variant="standard" onChange={e => parseInt(e.target.value) ? setSize(parseInt(e.target.value)) : ""} />
                         </Grid>
                     </Grid>
+                    <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
                 </Modal>
                 <Button size="small">Delete</Button>
             </CardActions>
