@@ -9,11 +9,33 @@ import SearchBar from './SearchBar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { drawer as drawerState } from '../features/Atoms';
 import { useRecoilState } from 'recoil';
+import * as React from 'react';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { route } from './Link';
 
 
 export default () => {
 
     const [drawer, setDrawer] = useRecoilState(drawerState);
+
+    const [menu, setMenu] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(menu);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setMenu(event.currentTarget);
+    };
+    const handleClose = () => {
+        setMenu(null);
+    };
+
+    const logout = () => {
+        window.location.href = "/login";
+    }
+
+    const editMe = () => {
+        route("/edit");
+        handleClose();
+    }
 
     return (
         <>
@@ -43,9 +65,23 @@ export default () => {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
                     >
                         <AccountCircleIcon />
                     </IconButton>
+                    <Menu
+                        id="user-menu"
+                        anchorEl={menu}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem onClick={editMe}>Edit me</MenuItem>
+                        <MenuItem onClick={logout}>Logout</MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
         </>

@@ -56,7 +56,7 @@ export default () => {
         <>
             
             Folder
-            <Link link="/">Link to folder</Link>
+            <Link link="/showfolder">Link to folder</Link>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container sx={{ flexWrap: "wrap", display: "flex" }}>
                     {users.map((user, index) => (

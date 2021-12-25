@@ -80,6 +80,9 @@ const rows = [
 ];
 
 export default () => {
+
+
+
     return (
         <>
             <div style={{ height: '500px', width: '100%' }}>
@@ -90,7 +93,6 @@ export default () => {
                     pageSize={7}
                     rowsPerPageOptions={[7]}
                     checkboxSelection
-                    disableSelectionOnClick
                 />
             </div>
 
@@ -100,13 +102,13 @@ export default () => {
                 direction="left"
                 icon={<SpeedDialIcon />}
             >
-            {actions.map((action) => (
-                <SpeedDialAction
-                    key={action.name}
-                    icon={action.icon}
-                    tooltipTitle={action.name}
-                />
-            ))}
+                {actions.map((action) => (
+                    <SpeedDialAction
+                        key={action.name}
+                        icon={action.icon}
+                        tooltipTitle={action.name}
+                    />
+                ))}
             </SpeedDial>
         </>
     );

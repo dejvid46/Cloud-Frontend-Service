@@ -1,13 +1,18 @@
 import { Route } from '../features/Router';
 import Folder from '../components/Folder';
 import Edit from '../components/Edit';
+import File from '../components/File';
 import UserStettings from '../components/UserStettings';
 
 
 const routes: Array<Route> = [
     {
-        name: "/",
+        name: "/showfolder",
         component: <Folder />
+    },
+    {
+        name: "/showfile",
+        component: <File />
     },
     {
         name: "/users",

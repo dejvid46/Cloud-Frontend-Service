@@ -11,9 +11,9 @@ export interface Route {
 
 export default ({routes}: RouterProps) => {
 
-    let [url, setUrl] = useState(window.location.pathname);
+    let [url, setUrl] = useState("/"+window.location.pathname.split("/")[1]);
 
-    window.onpopstate = () => setUrl(window.location.pathname);
+    window.onpopstate = () => setUrl("/"+window.location.pathname.split("/")[1]);
 
     return (
         <>

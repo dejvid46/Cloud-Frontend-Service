@@ -5,7 +5,11 @@ import Login from '../components/Login';
 
 const routes: Array<Route> = [
     {
-        name: "/",
+        name: "/showfolder",
+        component: <Main />
+    },
+    {
+        name: "/showfile",
         component: <Main />
     },
     {
