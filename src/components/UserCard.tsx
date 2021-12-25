@@ -2,6 +2,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -102,14 +103,67 @@ export default ({user, key}: UserCardProps) => {
                 <Modal buttonText='Edit'>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                        <TextField required defaultValue={name} id="name" label="Name" variant="standard" onChange={e => setName(e.target.value)} />
-                            <TextField required defaultValue={email} id="email" label="Email" variant="standard" onChange={e => setEmail(e.target.value)} />
-                            <TextField required defaultValue={pass} id="pass" label="Password" variant="standard" onChange={e => setPass(e.target.value)} />
+                            <TextField 
+                                required 
+                                defaultValue={name} 
+                                id="name" 
+                                label="Name" 
+                                variant="standard" 
+                                onChange={e => setName(e.target.value)} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={email} 
+                                id="email" 
+                                label="Email" 
+                                variant="standard" 
+                                onChange={e => setEmail(e.target.value)} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={pass} 
+                                id="pass" 
+                                label="Password" 
+                                variant="standard" 
+                                onChange={e => setPass(e.target.value)} 
+                            />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField required defaultValue={path} id="path" label="Path" variant="standard" onChange={e => setPath(e.target.value)} />
-                            <TextField required defaultValue={status} id="status" label="Status" variant="standard" onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} />
-                            <TextField required defaultValue={size} id="size" label="Size" variant="standard" onChange={e => parseInt(e.target.value) ? setSize(parseInt(e.target.value)) : ""} />
+                            <TextField 
+                                required 
+                                defaultValue={path} 
+                                id="path" 
+                                label="Path" 
+                                variant="standard" 
+                                onChange={e => setPath(e.target.value)} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={status} 
+                                id="status" 
+                                label="Status" 
+                                variant="standard" 
+                                type="number"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={size} 
+                                id="size" 
+                                label="Size" 
+                                variant="standard" 
+                                type="number"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">Mb</InputAdornment>
+                                }}
+                                onChange={e => parseInt(e.target.value) ? setSize(parseInt(e.target.value)) : ""} 
+                            />
                         </Grid>
                     </Grid>
                     <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>

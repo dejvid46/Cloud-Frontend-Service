@@ -1,6 +1,8 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { user as userState } from '../features/Atoms';
 import { useRecoilState } from 'recoil';
@@ -28,19 +30,84 @@ export default () => {
 
     return (
         <>
-            <Grid container spacing={2}>
-                <Grid item xs={6}>
-                <TextField required defaultValue={user.name} id="name" label="Name" variant="standard" onChange={e => setName(e.target.value)} />
-                    <TextField required defaultValue={user.email} id="email" label="Email" variant="standard" onChange={e => setEmail(e.target.value)} />
-                    <TextField required defaultValue={user.pass} id="pass" label="Password" variant="standard" onChange={e => setPass(e.target.value)} />
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField required defaultValue={user.path} id="path" label="Path" variant="standard" onChange={e => setPath(e.target.value)} />
-                    <TextField required defaultValue={user.status} id="status" label="Status" variant="standard" onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} />
-                    <TextField required defaultValue={user.size} id="size" label="Size" variant="standard" onChange={e => parseInt(e.target.value) ? setSize(parseInt(e.target.value)) : ""} />
-                </Grid>
-            </Grid>
-            <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
+            <Box sx={{
+                maxWidth: "400px",
+                margin: "0 auto",
+                verticalAlign: "middle"
+            }}>
+                <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <TextField 
+                                required 
+                                defaultValue={name} 
+                                id="name" 
+                                label="Name" 
+                                variant="standard" 
+                                size="medium"
+                                onChange={e => setName(e.target.value)} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={email} 
+                                id="email" 
+                                label="Email" 
+                                variant="standard"
+                                size="medium" 
+                                onChange={e => setEmail(e.target.value)} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={pass} 
+                                id="pass" 
+                                label="Password" 
+                                variant="standard"
+                                size="medium" 
+                                onChange={e => setPass(e.target.value)} 
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField 
+                                required 
+                                defaultValue={path} 
+                                id="path" 
+                                label="Path" 
+                                variant="standard"
+                                size="medium" 
+                                onChange={e => setPath(e.target.value)} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={status} 
+                                id="status" 
+                                label="Status" 
+                                variant="standard" 
+                                type="number"
+                                size="medium"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} 
+                            />
+                            <TextField 
+                                required 
+                                defaultValue={size} 
+                                id="size" 
+                                label="Size" 
+                                variant="standard" 
+                                type="number"
+                                size="medium"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">Mb</InputAdornment>
+                                }}
+                                onChange={e => parseInt(e.target.value) ? setSize(parseInt(e.target.value)) : ""} 
+                            />
+                        </Grid>
+                    </Grid>
+                <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
+            </Box>
         </>
     )
 }
