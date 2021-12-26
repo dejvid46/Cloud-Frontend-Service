@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Err404 from '../components/Err404';
 
 export interface RouterProps {
     routes: Array<Route>
@@ -17,7 +18,15 @@ export default ({routes}: RouterProps) => {
 
     return (
         <>
-            {routes.find(({name, component}) => name === url)?.component || "error 404"}
+            {routes.find(({name, component}) => name === url)?.component || <Err404 />}
         </>
     );
+}
+
+export const fileURL = () => {
+    let url = window.location.pathname.split("/");
+    url.shift();
+    url[0] = "";
+
+    return (url.length !== 0 ? url : [""]).join("/");
 }

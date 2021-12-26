@@ -1,7 +1,3 @@
-import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -9,56 +5,8 @@ import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from '@mui/icons-material/Print';
 import ShareIcon from '@mui/icons-material/Share';
-
-const columns: GridColDef[] = [
-    { field: 'img', headerName: '', width: 40 },
-    { field: 'name', headerName: 'Name', type: 'string', minWidth: 150 },
-    { field: 'modified', headerName: 'Modified', type: 'string' },
-    {
-        field: 'type',
-        headerName: 'Type',
-        type: 'string',
-    },
-    {
-        field: 'size',
-        headerName: 'Size',
-        type: 'number',
-        // valueGetter: (params: GridValueGetterParams) =>
-        //     `${params.getValue(params.id, 'firstName') || ''} ${
-        //         params.getValue(params.id, 'lastName') || ''
-        //     }`,
-    },
-    {
-        field: 'buttons',
-        headerName: '',
-        width: 200,
-        sortable: false,
-        renderCell: (params) => {
-            const onClick = (e: any) => {
-              e.stopPropagation(); // don't select this row after clicking
-      
-              const api: GridApi = params.api;
-              const thisRow: Record<string, GridCellValue> = {};
-      
-              api
-                .getAllColumns()
-                .filter((c) => c.field !== "__check__" && !!c)
-                .forEach(
-                  (c) => (thisRow[c.field] = params.getValue(params.id, c.field))
-                );
-      
-              return alert(JSON.stringify(thisRow, null, 4));
-            };
-      
-            return (
-                <Stack spacing={2} direction="row">
-                    <Button onClick={onClick} variant="outlined">Open</Button>
-                    <Button onClick={onClick} variant="outlined">Delete</Button>
-                </Stack>
-            );
-          }
-    }
-];
+import FolderTable from './FolderTable';
+import { tableData } from './FolderTable';
 
 const actions = [
     { icon: <FileCopyIcon />, name: 'Copy' },
@@ -68,7 +16,7 @@ const actions = [
 ];
 
 const rows = [
-    {id: 0, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
+    {id: 0, name: "cat.txt", modified: "11. 2. 2018", type: "folder", size: 0 },
     {id: 1, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
     {id: 2, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
     {id: 3, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
@@ -81,19 +29,15 @@ const rows = [
 
 export default () => {
 
+    const tableHeight = window.screen.height * 0.74;
 
+    const rowsCount = Math.round(tableHeight / 65);
 
     return (
         <>
-            <div style={{ height: '500px', width: '100%' }}>
+            <div id="tableDiv" style={{ height: `${tableHeight}px`, width: '100%' }}>
                 
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={7}
-                    rowsPerPageOptions={[7]}
-                    checkboxSelection
-                />
+                <FolderTable table={rows} rowsCount={rowsCount} />
             </div>
 
             <SpeedDial

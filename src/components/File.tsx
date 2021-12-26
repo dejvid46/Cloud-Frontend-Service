@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box';
+import { getCookie } from '../features/Fetch';
+import { fileURL } from '../features/Router';
 
 
 export default () => {
 
-    let str = "ksdhksg/sdgsdg/cattttt.txt";
+    let str = fileURL();
 
-    console.log();
+    console.log(str);
 
     const Image = () => {
         return (
@@ -13,7 +15,7 @@ export default () => {
                 <Box sx={{
                     margin: "auto"
                 }}>
-                    <img src={"file"+str} alt={str} ></img>
+                    {/* <img src onerror="fetch('https://picsum.photos/200',{headers: {hello:'World!'}}).then(r=>r.blob()).then(d=> this.src=window.URL.createObjectURL(d));" /> */}
                 </Box>
             </>
         )
@@ -35,10 +37,11 @@ export default () => {
         <>
             {
                 (
-                    str.endsWith(".png") && (<Image />) ||
-                    str.endsWith(".jpg") && (<Image />) ||
-                    str.endsWith(".gif") && (<Image />) ||
-                    str.endsWith(".txt") && (<Text />)
+                    (str.endsWith(".png") && (<Image />)) ||
+                    (str.endsWith(".jpg") && (<Image />)) ||
+                    (str.endsWith(".gif") && (<Image />)) ||
+                    (str.endsWith(".txt") && (<Text />)) ||
+                    ((<Text />))
                 )
             }
         </>
