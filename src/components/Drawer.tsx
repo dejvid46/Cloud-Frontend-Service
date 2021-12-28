@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import { drawer as drawerState, user as userState } from '../features/Atoms';
 import { useRecoilState } from 'recoil';
 import FileTree from './FileTree';
-import { route } from './Link';
+import { route } from '../features/Router';
 
 const drawerWidth = 240;
 
@@ -60,14 +60,14 @@ export default () => {
                     <List>
                         {
                             (user.status === 1 || user.status === 2) &&
-                                (<ListItem button key="user" onClick={() => route("/users")}>
+                                (<ListItem button key="user" onClick={() => route("users")}>
                                     <ListItemIcon>
                                         <PeopleAltIcon />
                                     </ListItemIcon>
                                     <ListItemText primary="Users" />
                                 </ListItem>)
                         }
-                        <ListItem button key="you" onClick={() => route("/edit")}>
+                        <ListItem button key="you" onClick={() => route("edit")}>
                             <ListItemIcon>
                                 <PersonIcon />
                             </ListItemIcon>

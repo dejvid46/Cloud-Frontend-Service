@@ -34,8 +34,3 @@ export default ({children, link, ...rest}: LinkProps) => {
         }}>{children}</a>
     );
 }
-
-export const route = (link: string) => {
-    window.history.pushState({}, "", link);
-    window.dispatchEvent(new Event("popstate"));
-}

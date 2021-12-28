@@ -1,5 +1,3 @@
-import Toolbar from '@mui/material/Toolbar';
-import Link from './Link';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import UserCard from './UserCard';
@@ -54,9 +52,6 @@ export default () => {
 
     return (
         <>
-            
-            Folder
-            <Link link="/showfolder">Link to folder</Link>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container sx={{ flexWrap: "wrap", display: "flex" }}>
                     {users.map((user, index) => (

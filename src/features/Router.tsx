@@ -30,3 +30,8 @@ export const fileURL = () => {
 
     return (url.length !== 0 ? url : [""]).join("/");
 }
+
+export const route = (link: string) => {
+    window.history.pushState({}, "", "/"+link);
+    window.dispatchEvent(new Event("popstate"));
+}

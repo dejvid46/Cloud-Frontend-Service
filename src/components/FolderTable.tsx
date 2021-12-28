@@ -2,8 +2,9 @@ import React from "react";
 import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { route } from './Link';
+import { route } from '../features/Router';
 import { fileURL } from '../features/Router';
+import { GridSelectionModel } from '@mui/x-data-grid';
 
 export interface tableData {
     id: number,
@@ -81,6 +82,10 @@ const columns: GridColDef[] = [
 
 export default ({ table, rowsCount }: TableProps) => {
 
+    const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
+
+
+
     return (
         <>
             <DataGrid
@@ -89,6 +94,11 @@ export default ({ table, rowsCount }: TableProps) => {
                 pageSize={rowsCount}
                 rowsPerPageOptions={[rowsCount]}
                 checkboxSelection
+
+                onSelectionModelChange={(newSelectionModel) => {
+                    setSelectionModel(newSelectionModel);
+                }}
+                selectionModel={selectionModel}
             />
         </>
     );
