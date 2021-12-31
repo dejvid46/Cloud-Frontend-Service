@@ -38,6 +38,7 @@ export default () => {
                 <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <TextField 
+                                sx={{ margin: "10px" }}
                                 required 
                                 defaultValue={name} 
                                 id="name" 
@@ -47,6 +48,7 @@ export default () => {
                                 onChange={e => setName(e.target.value)} 
                             />
                             <TextField 
+                                sx={{ margin: "10px" }}
                                 required 
                                 defaultValue={email} 
                                 id="email" 
@@ -56,6 +58,7 @@ export default () => {
                                 onChange={e => setEmail(e.target.value)} 
                             />
                             <TextField 
+                                sx={{ margin: "10px" }}
                                 required 
                                 defaultValue={pass} 
                                 id="pass" 
@@ -67,6 +70,7 @@ export default () => {
                         </Grid>
                         <Grid item xs={6}>
                             <TextField 
+                                sx={{ margin: "10px" }}
                                 required 
                                 defaultValue={path} 
                                 id="path" 
@@ -76,6 +80,7 @@ export default () => {
                                 onChange={e => setPath(e.target.value)} 
                             />
                             <TextField 
+                                sx={{ margin: "10px" }}
                                 required 
                                 defaultValue={status} 
                                 id="status" 
@@ -89,6 +94,7 @@ export default () => {
                                 onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} 
                             />
                             <TextField 
+                                sx={{ margin: "10px" }}
                                 required 
                                 defaultValue={size} 
                                 id="size" 

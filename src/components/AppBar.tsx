@@ -33,7 +33,7 @@ export default () => {
     }
 
     const editMe = () => {
-        route("/edit");
+        route("edit");
         handleClose();
     }
 
