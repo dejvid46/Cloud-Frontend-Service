@@ -92,7 +92,7 @@ export interface apiTree {
 }
 
 const data: apiTree = {
-    name: 'root',
+    name: '',
     children: [
       {
         name: 'index.html',
@@ -129,7 +129,14 @@ export default () => {
     setFolderTree(data);
 
     const renderTree = (nodes: apiTree, id: string = "") => {
-        const newId = id+"/"+nodes.name;
+
+        let newId = id;
+
+        if(id !== "/") {
+            newId = newId+"/"+nodes.name;
+        } else {
+            newId = newId+nodes.name;
+        }
         return (
             <CustomTreeItem key={newId} nodeId={newId} label={nodes.name}>
             {Array.isArray(nodes.children)

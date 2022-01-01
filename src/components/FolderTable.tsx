@@ -105,12 +105,16 @@ const columns: GridColDef[] = [
             const open = (e: any) => {
                 e.stopPropagation(); // don't select this row after clicking
                 
-                let fileType = (params.getValue(params.id, 'name') || "folder").toString().split(".")[1] || "folder";
+                const fileType = (params.getValue(params.id, 'name') || "folder").toString().split(".")[1] || "folder";
+
+                let fileUrl = fileURL();
+
+                fileUrl = fileUrl === "/" ? "" : fileUrl;
 
                 if(fileType === "folder"){
-                    route(`showfolder${fileURL()}/${rowData().name}`)
+                    route(`showfolder${fileUrl}/${rowData().name}`)
                 }else{
-                    route(`showfile${fileURL()}/${rowData().name}`)
+                    route(`showfile${fileUrl}/${rowData().name}`)
                 }
             };
 
@@ -156,10 +160,16 @@ export default ({ table, rowsCount }: TableProps) => {
 
                 let fileType = table[id].name.split(".")[1] || "folder";
 
+                let fileUrl = fileURL();
+
+                fileUrl = fileUrl === "/" ? "" : fileUrl;
+
                 if(fileType === "folder"){
-                    window.open(`/showfolder${fileURL()}/${table[id].name}`);
+                    const win = window.open(`/showfolder${fileUrl}/${table[id].name}`);
+                    win?.focus();
                 }else{
-                    window.open(`/showfile${fileURL()}/${table[id].name}`);
+                    const win = window.open(`/showfile${fileUrl}/${table[id].name}`);
+                    win?.focus();   
                 }
 
             }else{
