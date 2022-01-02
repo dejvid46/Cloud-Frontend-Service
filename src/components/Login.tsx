@@ -5,6 +5,8 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import { apiFetch, setCookie } from '../features/Fetch';
+import { route } from '../features/Router';
 
 
 export default () => {
@@ -12,9 +14,22 @@ export default () => {
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
 
-    const valid = () => {
-        console.log(email);
-        console.log(pass);
+    const valid = async () => {
+
+        const res = await apiFetch("/login", "POST", 
+            {
+                email: email,
+                pass: pass
+            }
+        )
+
+        if (res.status < 300) {
+            setCookie("token", (await res.json()).token || "");
+            route("showfolder")
+        }else{
+            console.log(await res.text());
+        }
+
     }
 
     return (

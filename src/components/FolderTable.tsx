@@ -1,9 +1,8 @@
 import React from "react";
-import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue, selectedIdsLookupSelector } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { route } from '../features/Router';
-import { fileURL } from '../features/Router';
+import { route, fileURL } from '../features/Router';
 import { GridSelectionModel, GridRowId } from '@mui/x-data-grid';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
@@ -16,6 +15,7 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import LaunchIcon from '@mui/icons-material/Launch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
+import { apiFetch } from '../features/Fetch';
 
 
 const actions = [
@@ -28,7 +28,6 @@ export interface tableData {
     id: number,
     name: string,
     modified: string,
-    type: string,
     size: number
 }
 
@@ -154,36 +153,81 @@ export default ({ table, rowsCount }: TableProps) => {
         }
     }
 
+    const filePath = (id: number) => {
+        let fileUrl = fileURL();
+        fileUrl = fileUrl === "/" ? "" : fileUrl;
+
+        return `${fileUrl}/${table[id].name}`;
+    }
+
     const open = () => {
         selectionModel.forEach((id: string | number) => {
-            if(typeof id === "number") {
 
-                let fileType = table[id].name.split(".")[1] || "folder";
+            if(typeof id === "string") id = parseInt(id);
 
-                let fileUrl = fileURL();
+            const fileType = table[id].name.split(".")[1] || "folder";
 
-                fileUrl = fileUrl === "/" ? "" : fileUrl;
-
-                if(fileType === "folder"){
-                    const win = window.open(`/showfolder${fileUrl}/${table[id].name}`);
-                    win?.focus();
-                }else{
-                    const win = window.open(`/showfile${fileUrl}/${table[id].name}`);
-                    win?.focus();   
-                }
-
+            if(fileType === "folder"){
+                const win = window.open(`/showfolder${filePath(id)}`);
+                win?.focus();
             }else{
-                console.log(table[parseInt(id)].name);
+                const win = window.open(`/showfile${filePath(id)}`);
+                win?.focus();
             }
         })
     }
 
-    const deleteFiles = () => {
+    const deleteFiles = async () => {
+        selectionModel.forEach(async (id: string | number) => {
 
+            if(typeof id === "string") id = parseInt(id);
+
+            const fileType = table[id].name.split(".")[1] || "folder";
+
+            let res;
+
+            if(fileType === "folder"){
+                res = await apiFetch(`/folder${filePath(id)}`, "DELETE")
+            }else{
+                res = await apiFetch(`/file${filePath(id)}`, "DELETE")
+            }
+
+            if (res.status < 200) {
+                console.log(await res.json())
+            }else{
+                console.log(await res.text())
+            }
+        })
     }
 
+    function downloadURI(uri: string, name: string) {
+        var link = document.createElement("a");
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        link.remove();
+      }
+
     const download = () => {
-        
+        selectionModel.forEach(async (id: string | number) => {
+
+            if(typeof id === "string") id = parseInt(id);
+
+            const fileType = table[id].name.split(".")[1] || "folder";
+
+            if(fileType !== "folder"){
+                const res = await apiFetch(`/file${filePath(id)}`, "GET")
+
+                if (res.status < 200) {
+                    console.log(await res.json())
+                }else{
+                    console.log(await res.text())
+                }
+            }
+
+        })
     }
 
     return (

@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Modal from './Modal';
 import { useState } from 'react';
+import { apiFetch } from '../features/Fetch';
 
 export interface User {
     id: number;
@@ -36,13 +37,23 @@ export default ({user, key}: UserCardProps) => {
     const [path, setPath] = useState(user.path);
     const [status, setStatus] = useState(user.status);
 
-    const valid = () => {
-        console.log(name);
-        console.log(email);
-        console.log(pass);
-        console.log(size);
-        console.log(path);
-        console.log(status);
+    const valid = async () => {
+        const res = await apiFetch("/user", "POST", 
+            {
+                name: name,
+                email: email,
+                pass: pass,
+                size: size,
+                path: path,
+                status: status
+            }
+        )
+
+        if (res.status < 200) {
+            console.log(await res.json())
+        }else{
+            console.log(await res.text())
+        }
     }
 
     return (

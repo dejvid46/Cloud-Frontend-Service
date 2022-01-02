@@ -1,21 +1,31 @@
+import React from "react";
 import FolderTable from './FolderTable';
 import { tableData } from './FolderTable';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-// name date size
-const rows: tableData[] = [
-    {id: 0, name: "cat.jpg", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 1, name: "text.txt", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 2, name: "pipipupi.mp3", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 3, name: "pumprdlik.avi", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 4, name: "Kuku", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 5, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 6, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 },
-    {id: 7, name: "Kuku2", modified: "11. 2. 2018", type: "folder", size: 0 },
-];
+import { fileURL } from '../features/Router';
+import { apiFetch, setCookie } from '../features/Fetch';
 
-export default () => {
+export default async () => {
+
+    const [rows, setRows] = React.useState<tableData[]>([]);
+
+    const res = await apiFetch(`/folder${fileURL()}`, "GET");
+    const json = await res.json();
+
+    if (res.status < 300 && json) {
+        setRows(json.map((row: any, index: number) => {
+            return {
+                id: index,
+                name: row.name,
+                modified: row.date,
+                size: row.size
+            } as tableData;
+        }))
+    }else{
+        console.log(await res.text());
+    }
 
     const tableHeight = window.screen.height * 0.74;
 
