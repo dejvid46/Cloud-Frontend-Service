@@ -15,6 +15,7 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import LaunchIcon from '@mui/icons-material/Launch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { apiFetch } from '../features/Fetch';
 
 
@@ -43,13 +44,15 @@ const columns: GridColDef[] = [
         width: 40,
         renderCell: (params) => {
 
-            const type = (params.getValue(params.id, 'name') || "folder").toString().split(".")[1] || "folder";
+            const fileAndPath = (params.getValue(params.id, 'name') || "folder").toString().split(".");
+
+            const type = fileAndPath.length === 1 ? "folder" : fileAndPath[fileAndPath.length - 1];
       
             return (
                 <>
                     {
                         (
-                            (type === "foder" && (<FolderOpenIcon />)) ||
+                            (type === "folder" && (<FolderOpenIcon />)) ||
                             (type === "jpg" && (<PhotoIcon />)) ||
                             (type === "png" && (<PhotoIcon />)) ||
                             (type === "mp3" && (<MusicVideoIcon />)) ||
@@ -58,21 +61,28 @@ const columns: GridColDef[] = [
                             (type === "docx" && (<TextSnippetIcon />)) ||
                             (type === "avi" && (<VideocamIcon />)) ||
                             (type === "mp4" && (<VideocamIcon />)) ||
-                            ((<FolderOpenIcon />))
+                            ((<InsertDriveFileIcon />))
                         )
                     }
                 </>
             );
         }
     },
-    { field: 'name', headerName: 'Name', type: 'string', minWidth: 150 },
+    { 
+        field: 'name', 
+        headerName: 'Name', 
+        type: 'string', 
+        minWidth: 150
+    },
     { field: 'modified', headerName: 'Modified', type: 'string' },
     {
         field: 'type',
         headerName: 'Type',
         type: 'string',
         valueGetter: (params: GridValueGetterParams) => {
-            return (params.getValue(params.id, 'name') || "folder").toString().split(".")[1] || "folder";
+            const fileAndPath = (params.getValue(params.id, 'name') || "folder").toString().split(".");
+
+            return fileAndPath.length === 1 ? "folder" : fileAndPath[fileAndPath.length - 1];
         }
     },
     {

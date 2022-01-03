@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import FolderTable from './FolderTable';
 import { tableData } from './FolderTable';
 import Grid from '@mui/material/Grid';
@@ -7,29 +7,43 @@ import Typography from '@mui/material/Typography';
 import { fileURL } from '../features/Router';
 import { apiFetch, setCookie } from '../features/Fetch';
 
-export default async () => {
 
-    const [rows, setRows] = React.useState<tableData[]>([]);
 
-    const res = await apiFetch(`/folder${fileURL()}`, "GET");
-    const json = await res.json();
+export default () => {
 
-    if (res.status < 300 && json) {
-        setRows(json.map((row: any, index: number) => {
-            return {
-                id: index,
-                name: row.name,
-                modified: row.date,
-                size: row.size
-            } as tableData;
-        }))
-    }else{
-        console.log(await res.text());
+    const [rows, setRows] = useState<tableData[]>([]);
+
+    const getTableData = async () => {
+        const res = await apiFetch(`/folder${fileURL()}`, "GET");
+
+        if (res.status < 300) {
+
+            const json = await res.json();
+            setRows(json.map((row: any, index: number) => {
+                return {
+                    id: index,
+                    name: row.name,
+                    modified: row.date,
+                    size: row.size
+                } as tableData;
+            }))
+
+        }else{
+            console.log(await res.text());
+        }
     }
 
-    const tableHeight = window.screen.height * 0.74;
+    useEffect(() => {
+        window.addEventListener('popstate', function (event) {
+            getTableData();
+            console.log("jdgssdgjksdfsd")
+        });
+        (getTableData())
+    }, []);
 
-    const rowsCount = Math.round(tableHeight / 65);
+    const tableHeight = window.screen.height * 0.60;
+
+    const rowsCount = Math.round(tableHeight / 51);
 
     return (
         <>
