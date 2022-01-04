@@ -12,9 +12,15 @@ import { apiFetch, setCookie } from '../features/Fetch';
 export default () => {
 
     const [rows, setRows] = useState<tableData[]>([]);
+    const [find, setFind] = useState(false);
 
     const getTableData = async () => {
-        const res = await apiFetch(`/folder${fileURL()}`, "GET");
+
+        let fileUrl: string = fileURL();
+
+        fileUrl = fileUrl === "" ? "/" : fileUrl;
+
+        const res = await apiFetch(`/folder${fileUrl}`, "GET");
 
         if (res.status < 300) {
 
@@ -27,17 +33,20 @@ export default () => {
                     size: row.size
                 } as tableData;
             }))
-
+            setFind(true);
+            console.log(fileURL());
         }else{
+            setFind(false);
+            setRows([]);
             console.log(await res.text());
         }
     }
 
     useEffect(() => {
-        window.addEventListener('popstate', function (event) {
+        window.onpopstate = () => {
             getTableData();
             console.log("jdgssdgjksdfsd")
-        });
+        };
         (getTableData())
     }, []);
 
@@ -49,9 +58,9 @@ export default () => {
         <>
             <div id="tableDiv" style={{ height: `${tableHeight}px`, width: '100%' }}>
                 
-                {rows.length !== 0 ? 
+                {rows.length !== 0 && find ? 
                     <FolderTable table={rows} rowsCount={rowsCount} /> 
-                    : 
+                : find ?
                     <>
                         <Grid
                             container
@@ -69,6 +78,26 @@ export default () => {
                             </Grid>
                         </Grid>
                     </>
+                :
+                <>
+                    <Grid
+                        container
+                        spacing={0}
+                        direction="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        style={{ minHeight: '70vh' }}
+                    >
+                        <Grid item xs={3}>
+                            <Typography variant="h6" align="center" component="div" style={{marginBottom: "2vh"}} >
+                                Error 404
+                            </Typography>
+                            <Typography variant="overline" component="div" >
+                                cant find folder
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </>
                 }
             </div>
         </>
