@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue, selectedIdsLookupSelector } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -16,7 +16,9 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { apiFetch } from '../features/Fetch';
+import { apiFetch, apiFetchDownload } from '../features/Fetch';
+import { useRecoilValue } from 'recoil';
+import { folderPath as folderPathState } from '../features/Atoms';
 
 
 const actions = [
@@ -145,7 +147,9 @@ const columns: GridColDef[] = [
 
 export default ({ table, rowsCount }: TableProps) => {
 
-    const [selectionModel, setSelectionModel] = React.useState<GridSelectionModel>([]);
+    const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
+
+    const folderPath = useRecoilValue(folderPathState);
 
     const speedDialOnClick = (item: string) => {
         switch (item) {
@@ -164,7 +168,7 @@ export default ({ table, rowsCount }: TableProps) => {
     }
 
     const filePath = (id: number) => {
-        let fileUrl = fileURL();
+        let fileUrl = folderPath;
         fileUrl = fileUrl === "/" ? "" : fileUrl;
 
         return `${fileUrl}/${table[id].name}`;
@@ -228,13 +232,7 @@ export default ({ table, rowsCount }: TableProps) => {
             const fileType = table[id].name.split(".")[1] || "folder";
 
             if(fileType !== "folder"){
-                const res = await apiFetch(`/file${filePath(id)}`, "GET")
-
-                if (res.status < 200) {
-                    console.log(await res.json())
-                }else{
-                    console.log(await res.text())
-                }
+                await apiFetchDownload(`/file${filePath(id)}`, "GET", table[id].name);
             }
 
         })

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Err404 from '../components/Err404';
+import { useRecoilState } from 'recoil';
+import { folderPath as folderPathState } from '../features/Atoms';
 
 export interface RouterProps {
     routes: Array<Route>
@@ -13,8 +15,12 @@ export interface Route {
 export default ({routes}: RouterProps) => {
 
     let [url, setUrl] = useState("/"+window.location.pathname.split("/")[1]);
+    const [folderPath, setFolderPath] = useRecoilState(folderPathState);
 
-    window.onpopstate = () => setUrl("/"+window.location.pathname.split("/")[1]);
+    window.onpopstate = () => {
+        setFolderPath(fileURL());
+        setUrl("/"+window.location.pathname.split("/")[1])
+    };
 
     return (
         <>

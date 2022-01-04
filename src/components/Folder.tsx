@@ -6,21 +6,19 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { fileURL } from '../features/Router';
 import { apiFetch, setCookie } from '../features/Fetch';
-
-
+import { useRecoilValue } from 'recoil';
+import { folderPath as folderPathState } from '../features/Atoms';
 
 export default () => {
 
     const [rows, setRows] = useState<tableData[]>([]);
-    const [find, setFind] = useState(false);
+    const [find, setFind] = useState(true);
+
+    const folderPath = useRecoilValue(folderPathState);
 
     const getTableData = async () => {
 
-        let fileUrl: string = fileURL();
-
-        fileUrl = fileUrl === "" ? "/" : fileUrl;
-
-        const res = await apiFetch(`/folder${fileUrl}`, "GET");
+        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "GET");
 
         if (res.status < 300) {
 
@@ -34,7 +32,7 @@ export default () => {
                 } as tableData;
             }))
             setFind(true);
-            console.log(fileURL());
+            //console.log(fileURL());
         }else{
             setFind(false);
             setRows([]);
@@ -43,12 +41,8 @@ export default () => {
     }
 
     useEffect(() => {
-        window.onpopstate = () => {
-            getTableData();
-            console.log("jdgssdgjksdfsd")
-        };
-        (getTableData())
-    }, []);
+        getTableData()
+    }, [folderPath]);
 
     const tableHeight = window.screen.height * 0.60;
 
@@ -58,7 +52,7 @@ export default () => {
         <>
             <div id="tableDiv" style={{ height: `${tableHeight}px`, width: '100%' }}>
                 
-                {rows.length !== 0 && find ? 
+                {rows.length !== 0 ? 
                     <FolderTable table={rows} rowsCount={rowsCount} /> 
                 : find ?
                     <>

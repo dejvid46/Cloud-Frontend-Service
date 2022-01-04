@@ -34,3 +34,8 @@ export const folderTree = atom({
     key: 'folderTreeState',
     default: {} as apiTree,
 });
+
+export const folderPath = atom({
+    key: 'folderPathState',
+    default: "",
+});

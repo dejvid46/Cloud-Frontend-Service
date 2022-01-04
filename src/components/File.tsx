@@ -1,13 +1,43 @@
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { getCookie } from '../features/Fetch';
 import { fileURL } from '../features/Router';
+import { useRecoilValue } from 'recoil';
+import { folderPath as folderPathState } from '../features/Atoms';
+import { apiFetch } from '../features/Fetch';
+
+function _arrayBufferToBase64( buffer: ArrayBuffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
 
 
 export default () => {
 
-    let str = fileURL();
+    const folderPath = useRecoilValue(folderPathState);
+    let [data, setData] = useState("")
 
-    console.log(str);
+    console.log(folderPath);
+
+    const getData = async () => {
+        (await 
+            apiFetch(`/file${folderPath}`, "GET")
+        ).arrayBuffer()
+        .then((buffer) => {
+            setData(_arrayBufferToBase64(buffer));
+
+
+        });
+    }
+
+    useEffect(() => {
+        getData();
+    }, [folderPath]);
 
     const Image = () => {
         return (
@@ -15,7 +45,8 @@ export default () => {
                 <Box sx={{
                     margin: "auto"
                 }}>
-                    {/* <img src onerror="fetch('https://picsum.photos/200',{headers: {hello:'World!'}}).then(r=>r.blob()).then(d=> this.src=window.URL.createObjectURL(d));" /> */}
+                    aaaaaaaaaa
+                    <img src={"data: image/png;base64,"+data} alt="photo" />
                 </Box>
             </>
         )
@@ -27,7 +58,7 @@ export default () => {
                 <Box sx={{
                     margin: "auto"
                 }}>
-                    {str}
+                    {folderPath}
                 </Box>
             </>
         )
@@ -37,10 +68,10 @@ export default () => {
         <>
             {
                 (
-                    (str.endsWith(".png") && (<Image />)) ||
-                    (str.endsWith(".jpg") && (<Image />)) ||
-                    (str.endsWith(".gif") && (<Image />)) ||
-                    (str.endsWith(".txt") && (<Text />)) ||
+                    (folderPath.endsWith(".png") && (<Image />)) ||
+                    (folderPath.endsWith(".jpg") && (<Image />)) ||
+                    (folderPath.endsWith(".gif") && (<Image />)) ||
+                    (folderPath.endsWith(".txt") && (<Text />)) ||
                     ((<Text />))
                 )
             }

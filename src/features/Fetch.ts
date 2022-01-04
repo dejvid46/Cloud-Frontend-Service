@@ -16,6 +16,29 @@ export const apiFetch = async (path: string, method: string, json?: any) => {
     ); 
 }
 
+export const apiFetchDownload = async (path: string, method: string, fileName: string) => {
+
+    return await fetch(
+        path,
+        {
+            method: method,
+            headers: new Headers({
+                'token': getCookie("token") || ""
+            })
+        }
+    )
+    .then(response => response.blob())
+    .then(blob => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    });
+}
+
 export function getCookie(name: string) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);

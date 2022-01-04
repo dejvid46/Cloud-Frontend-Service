@@ -98,6 +98,9 @@ const data: apiTree = {
         name: 'index.html',
       },
       {
+        name: 'index.php',
+      },
+      {
         name: 'users',
         children: [
           {
