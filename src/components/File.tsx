@@ -19,10 +19,8 @@ function _arrayBufferToBase64( buffer: ArrayBuffer ) {
 
 export default () => {
 
-    const folderPath = useRecoilValue(folderPathState);
+    const folderPath = useRecoilValue(folderPathState) || fileURL();
     let [data, setData] = useState("")
-
-    console.log(folderPath);
 
     const getData = async () => {
         (await 
@@ -36,7 +34,9 @@ export default () => {
     }
 
     useEffect(() => {
-        getData();
+        if(fileURL() === folderPath){
+            getData();
+        }
     }, [folderPath]);
 
     const Image = () => {
@@ -45,7 +45,6 @@ export default () => {
                 <Box sx={{
                     margin: "auto"
                 }}>
-                    aaaaaaaaaa
                     <img src={"data: image/png;base64,"+data} alt="photo" />
                 </Box>
             </>

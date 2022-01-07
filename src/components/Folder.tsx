@@ -14,7 +14,7 @@ export default () => {
     const [rows, setRows] = useState<tableData[]>([]);
     const [find, setFind] = useState(true);
 
-    const folderPath = useRecoilValue(folderPathState);
+    const folderPath = useRecoilValue(folderPathState) || fileURL();
 
     const getTableData = async () => {
 
@@ -32,7 +32,6 @@ export default () => {
                 } as tableData;
             }))
             setFind(true);
-            //console.log(fileURL());
         }else{
             setFind(false);
             setRows([]);
@@ -41,7 +40,9 @@ export default () => {
     }
 
     useEffect(() => {
-        getTableData()
+        if(fileURL() === folderPath){
+            getTableData()
+        }
     }, [folderPath]);
 
     const tableHeight = window.screen.height * 0.60;
@@ -53,7 +54,7 @@ export default () => {
             <div id="tableDiv" style={{ height: `${tableHeight}px`, width: '100%' }}>
                 
                 {rows.length !== 0 ? 
-                    <FolderTable table={rows} rowsCount={rowsCount} /> 
+                    <FolderTable table={rows}  rowsCount={rowsCount} setRows={setRows} /> 
                 : find ?
                     <>
                         <Grid

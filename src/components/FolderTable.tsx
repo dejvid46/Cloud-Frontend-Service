@@ -20,6 +20,27 @@ import { apiFetch, apiFetchDownload } from '../features/Fetch';
 import { useRecoilValue } from 'recoil';
 import { folderPath as folderPathState } from '../features/Atoms';
 
+function secondsToDhms(seconds: number) {
+    seconds = Number(seconds);
+    var month = Math.floor(seconds / (3600*24*30));
+    var d = Math.floor(seconds / (3600*24) / 30);
+    var h = Math.floor(seconds % (3600*24) / 3600);
+    var m = Math.floor(seconds % 3600 / 60);
+
+    var monthDisplay = month > 0 ? month + "m": "";
+    var dDisplay = d > 0 ? d  + "d " : "";
+    var hDisplay = h > 0 ? h + "h " : "";
+    var mDisplay = m > 0 ? m + "m " : "";
+
+    if (d < 1) {
+        return dDisplay + hDisplay + mDisplay;    
+    }else if (month >= 1){
+        return dDisplay + monthDisplay; 
+    }else{
+        return dDisplay + hDisplay;
+    }
+    
+}
 
 const actions = [
     { icon: <LaunchIcon />, name: 'Open' },
@@ -36,7 +57,8 @@ export interface tableData {
 
 interface TableProps {
     table: tableData[],
-    rowsCount: number
+    rowsCount: number,
+    setRows: React.Dispatch<React.SetStateAction<tableData[]>>
 }
 
 const columns: GridColDef[] = [
@@ -76,7 +98,21 @@ const columns: GridColDef[] = [
         type: 'string', 
         minWidth: 150
     },
-    { field: 'modified', headerName: 'Modified', type: 'string' },
+    { 
+        field: 'modifiedDate', 
+        headerName: 'Modified', 
+        type: 'string',
+        minWidth: 100,
+        valueGetter: (params: GridValueGetterParams) => {
+            const modifiedStr = (params.getValue(params.id, 'modified') || "").toString();
+
+            const time = parseInt(modifiedStr);
+
+            if (isNaN(time)) return modifiedStr;
+
+            return secondsToDhms(time);
+        }
+    },
     {
         field: 'type',
         headerName: 'Type',
@@ -145,7 +181,7 @@ const columns: GridColDef[] = [
     }
 ];
 
-export default ({ table, rowsCount }: TableProps) => {
+export default ({ table, rowsCount, setRows }: TableProps) => {
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
 
@@ -207,22 +243,35 @@ export default ({ table, rowsCount }: TableProps) => {
             }
 
             if (res.status < 200) {
-                console.log(await res.json())
+                console.log(await res.json());
+                refreshTableData();
             }else{
-                console.log(await res.text())
+                console.log(await res.text());
+                refreshTableData();
             }
         })
     }
 
-    function downloadURI(uri: string, name: string) {
-        var link = document.createElement("a");
-        link.download = name;
-        link.href = uri;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        link.remove();
-      }
+    const refreshTableData = async () => {
+
+        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "GET");
+
+        if (res.status < 300) {
+
+            const json = await res.json();
+            setRows(json.map((row: any, index: number) => {
+                return {
+                    id: index,
+                    name: row.name,
+                    modified: row.date,
+                    size: row.size
+                } as tableData;
+            }))
+            setSelectionModel([]);
+        }else{
+            console.log(await res.text());
+        }
+    }
 
     const download = () => {
         selectionModel.forEach(async (id: string | number) => {

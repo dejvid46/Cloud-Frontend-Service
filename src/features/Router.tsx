@@ -14,17 +14,17 @@ export interface Route {
 
 export default ({routes}: RouterProps) => {
 
-    let [url, setUrl] = useState("/"+window.location.pathname.split("/")[1]);
+    let [url, setUrl] = useState(window.location.pathname);
     const [folderPath, setFolderPath] = useRecoilState(folderPathState);
 
     window.onpopstate = () => {
         setFolderPath(fileURL());
-        setUrl("/"+window.location.pathname.split("/")[1])
+        setUrl(window.location.pathname);
     };
 
     return (
         <>
-            {routes.find(({name, component}) => name === url)?.component || <Err404 />}
+            {routes.find(({name, component}) => name === "/"+url.split("/")[1])?.component || <Err404 />}
         </>
     );
 }
