@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 
 interface ModalProps extends React.HTMLProps<HTMLDivElement> {
+    open: boolean,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     children: React.ReactNode,
     buttonText?: string,
 }
@@ -19,8 +21,8 @@ const style = {
     p: 4,
 };
   
-export default ({children, buttonText, ...rest}: ModalProps) => {
-    const [open, setOpen] = useState(false);
+export default ({children, buttonText, open, setOpen, ...rest}: ModalProps) => {
+    
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 

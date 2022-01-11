@@ -1,52 +1,35 @@
 import { useState } from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue, selectedIdsLookupSelector } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { route, fileURL } from '../features/Router';
-import { GridSelectionModel, GridRowId } from '@mui/x-data-grid';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
+import { GridSelectionModel } from '@mui/x-data-grid';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import PhotoIcon from '@mui/icons-material/Photo';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import MusicVideoIcon from '@mui/icons-material/MusicVideo';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import LaunchIcon from '@mui/icons-material/Launch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DownloadIcon from '@mui/icons-material/Download';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { apiFetch, apiFetchDownload } from '../features/Fetch';
-import { useRecoilValue } from 'recoil';
-import { folderPath as folderPathState } from '../features/Atoms';
+import FolderActions from './FolderActions';
 
 function secondsToDhms(seconds: number) {
     seconds = Number(seconds);
-    var month = Math.floor(seconds / (3600*24*30));
-    var d = Math.floor(seconds / (3600*24) / 30);
+    var d = Math.floor(seconds / (3600*24));
     var h = Math.floor(seconds % (3600*24) / 3600);
     var m = Math.floor(seconds % 3600 / 60);
 
-    var monthDisplay = month > 0 ? month + "m": "";
     var dDisplay = d > 0 ? d  + "d " : "";
     var hDisplay = h > 0 ? h + "h " : "";
     var mDisplay = m > 0 ? m + "m " : "";
 
     if (d < 1) {
-        return dDisplay + hDisplay + mDisplay;    
-    }else if (month >= 1){
-        return dDisplay + monthDisplay; 
+        return mDisplay + hDisplay;
+    }else if(h < 1){
+        return mDisplay;
     }else{
         return dDisplay + hDisplay;
     }
-    
 }
-
-const actions = [
-    { icon: <LaunchIcon />, name: 'Open' },
-    { icon: <DeleteIcon />, name: 'Delete' },
-    { icon: <DownloadIcon />, name: 'Download' },
-];
 
 export interface tableData {
     id: number,
@@ -185,108 +168,6 @@ export default ({ table, rowsCount, setRows }: TableProps) => {
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
 
-    const folderPath = useRecoilValue(folderPathState);
-
-    const speedDialOnClick = (item: string) => {
-        switch (item) {
-            case "Open":
-                open()
-                break;
-            case "Delete":
-                deleteFiles()
-                break;
-            case "Download":
-                download()
-                break;
-            default:
-                break;
-        }
-    }
-
-    const filePath = (id: number) => {
-        let fileUrl = folderPath;
-        fileUrl = fileUrl === "/" ? "" : fileUrl;
-
-        return `${fileUrl}/${table[id].name}`;
-    }
-
-    const open = () => {
-        selectionModel.forEach((id: string | number) => {
-
-            if(typeof id === "string") id = parseInt(id);
-
-            const fileType = table[id].name.split(".")[1] || "folder";
-
-            if(fileType === "folder"){
-                const win = window.open(`/showfolder${filePath(id)}`);
-                win?.focus();
-            }else{
-                const win = window.open(`/showfile${filePath(id)}`);
-                win?.focus();
-            }
-        })
-    }
-
-    const deleteFiles = async () => {
-        selectionModel.forEach(async (id: string | number) => {
-
-            if(typeof id === "string") id = parseInt(id);
-
-            const fileType = table[id].name.split(".")[1] || "folder";
-
-            let res;
-
-            if(fileType === "folder"){
-                res = await apiFetch(`/folder${filePath(id)}`, "DELETE")
-            }else{
-                res = await apiFetch(`/file${filePath(id)}`, "DELETE")
-            }
-
-            if (res.status < 200) {
-                console.log(await res.json());
-                refreshTableData();
-            }else{
-                console.log(await res.text());
-                refreshTableData();
-            }
-        })
-    }
-
-    const refreshTableData = async () => {
-
-        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "GET");
-
-        if (res.status < 300) {
-
-            const json = await res.json();
-            setRows(json.map((row: any, index: number) => {
-                return {
-                    id: index,
-                    name: row.name,
-                    modified: row.date,
-                    size: row.size
-                } as tableData;
-            }))
-            setSelectionModel([]);
-        }else{
-            console.log(await res.text());
-        }
-    }
-
-    const download = () => {
-        selectionModel.forEach(async (id: string | number) => {
-
-            if(typeof id === "string") id = parseInt(id);
-
-            const fileType = table[id].name.split(".")[1] || "folder";
-
-            if(fileType !== "folder"){
-                await apiFetchDownload(`/file${filePath(id)}`, "GET", table[id].name);
-            }
-
-        })
-    }
-
     return (
         <>
             <DataGrid
@@ -301,22 +182,12 @@ export default ({ table, rowsCount, setRows }: TableProps) => {
                 }}
                 selectionModel={selectionModel}
             />
-            <SpeedDial
-                ariaLabel="SpeedDial basic example"
-                sx={{ position: 'fixed', bottom: 16, right: 16 }}
-                direction="left"
-                icon={<SpeedDialIcon />}
-            >
-                {actions.map((action) => (
-                    <SpeedDialAction
-                        key={action.name}
-                        data-index={action.name}
-                        icon={action.icon}
-                        tooltipTitle={action.name}
-                        onClick={() => speedDialOnClick(action.name)}
-                    />
-                ))}
-            </SpeedDial>
+            <FolderActions 
+                table={table}
+                selectionModel= {selectionModel}
+                setSelectionModel={setSelectionModel}
+                setRows={setRows}
+            />
         </>
     );
 }
