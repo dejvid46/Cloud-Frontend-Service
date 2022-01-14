@@ -3,84 +3,78 @@ import TreeView from '@mui/lab/TreeView';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import { useRecoilState } from 'recoil';
-import { folderTree as folderTreeState } from '../features/Atoms';
 import Typography from '@mui/material/Typography';
+
+import { useRecoilState } from 'recoil'
+import { useEffect } from "react";
+import { folderTree as folderTreeState } from '../features/Atoms';
 import { route } from '../features/Router';
+import { apiFetch } from '../features/Fetch';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem, {
-  TreeItemProps,
-  useTreeItem,
-  TreeItemContentProps,
+    TreeItemProps,
+    useTreeItem,
+    TreeItemContentProps,
 } from '@mui/lab/TreeItem';
 import clsx from 'clsx';
 
 const CustomContent = React.forwardRef(function CustomContent(
-    props: TreeItemContentProps,
-    ref,
+        props: TreeItemContentProps,
+        ref,
   ) {
     const {
-      classes,
-      className,
-      label,
-      nodeId,
-      icon: iconProp,
-      expansionIcon,
-      displayIcon,
+        classes,
+        className,
+        label,
+        nodeId,
+        icon: iconProp,
+        expansionIcon,
+        displayIcon,
     } = props;
   
     const {
-      disabled,
-      expanded,
-      selected,
-      focused,
-      handleExpansion,
-      handleSelection,
-      preventSelection,
+        disabled,
+        expanded,
+        selected,
+        focused,
+        handleExpansion,
+        handleSelection,
+        preventSelection,
     } = useTreeItem(nodeId);
   
     const icon = iconProp || expansionIcon || displayIcon;
   
     const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      preventSelection(event);
+        preventSelection(event);
     };
   
     const handleExpansionClick = (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+        event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     ) => {
-      handleExpansion(event);
-    };
-  
-    const handleSelectionClick = (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    ) => {
-      handleSelection(event);
+        handleExpansion(event);
     };
   
     return (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={clsx(className, classes.root, {
-          [classes.expanded]: expanded,
-          [classes.selected]: selected,
-          [classes.focused]: focused,
-          [classes.disabled]: disabled,
+            [classes.expanded]: expanded,
+            [classes.selected]: selected,
+            [classes.focused]: focused,
+            [classes.disabled]: disabled,
         })}
         onMouseDown={handleMouseDown}
         ref={ref as React.Ref<HTMLDivElement>}
       >
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
         <div onClick={handleExpansionClick} className={classes.iconContainer}>
-          {icon}
+            {icon}
         </div>
         <Typography
-          onClick={handleSelectionClick}
-          component="div"
-          className={classes.label}
+            component="div"
+            className={classes.label}
         >
-          {label}
+            {label}
         </Typography>
       </div>
     );
@@ -88,26 +82,27 @@ const CustomContent = React.forwardRef(function CustomContent(
 
 export interface apiTree {
     name: string;
-    children?: readonly apiTree[];
+    folders?: readonly apiTree[];
 }
 
 const data: apiTree = {
     name: '',
-    children: [
-      {
-        name: 'index.html',
-      },
-      {
-        name: 'index.php',
-      },
-      {
-        name: 'users',
-        children: [
-          {
-                name: 'text.txt',
-          },
-        ],
-      },
+    folders: [
+        {
+            name: 'index.html',
+            folders: []
+        },
+        {
+            name: 'index.php',
+        },
+        {
+            name: 'users',
+            folders: [
+                {
+                        name: 'text.txt',
+                },
+            ],
+        },
     ],
 }
 
@@ -123,13 +118,25 @@ const redirect = (nodeId: string) => {
     }
 };
 
-  
-
 export default () => {
 
     const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
 
-    setFolderTree(data);
+    useEffect(() => {
+        refreshFolder();
+    }, []);
+
+    const refreshFolder = async () => {
+        const res = await apiFetch(`/folder_tree`, "GET");
+
+        if (res.status < 300) {
+
+            setFolderTree(await res.json());
+            
+        }else{
+            console.log(await res.text());
+        }
+    }
 
     const renderTree = (nodes: apiTree, id: string = "") => {
 
@@ -142,8 +149,8 @@ export default () => {
         }
         return (
             <CustomTreeItem key={newId} nodeId={newId} label={nodes.name}>
-            {Array.isArray(nodes.children)
-                ? nodes.children.map((node) => renderTree(node, newId))
+            {Array.isArray(nodes.folders)
+                ? nodes.folders.map((node) => renderTree(node, newId))
                 : null}
             </CustomTreeItem>
         )
@@ -159,6 +166,7 @@ export default () => {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
+                        onClick={refreshFolder}
                     >
                         <RefreshIcon />
                     </IconButton>

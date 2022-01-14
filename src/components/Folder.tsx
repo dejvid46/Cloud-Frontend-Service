@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import FolderTable from './FolderTable';
-import { tableData } from './FolderTable';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+
+import FolderTable from './FolderTable';
+import { tableData } from './FolderTable';
 import { fileURL } from '../features/Router';
-import { apiFetch, setCookie } from '../features/Fetch';
+import { apiFetch } from '../features/Fetch';
 import { useRecoilValue } from 'recoil';
 import { folderPath as folderPathState } from '../features/Atoms';
 
@@ -15,6 +16,12 @@ export default () => {
     const [find, setFind] = useState(true);
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
+
+    useEffect(() => {
+        if(fileURL() === folderPath){
+            getTableData()
+        }
+    }, [folderPath]);
 
     const getTableData = async () => {
 
@@ -38,12 +45,6 @@ export default () => {
             console.log(await res.text());
         }
     }
-
-    useEffect(() => {
-        if(fileURL() === folderPath){
-            getTableData()
-        }
-    }, [folderPath]);
 
     const tableHeight = window.screen.height * 0.60;
 

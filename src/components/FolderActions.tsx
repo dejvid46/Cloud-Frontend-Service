@@ -117,7 +117,7 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 console.log(await res.text());
             }
         });
-        refreshTableData(); 
+        refreshTableData();
     }
 
     const refreshTableData = async () => {
@@ -159,7 +159,8 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
         if(files !== undefined){
             for (let i = 0; i < files.length; i++) {
 
-                let res = await apiFetchUpload(`/file${folderPath === "" ? "/" : folderPath}`, "POST", files[i]);
+                console.log(`/file${folderPath}`);
+                let res = await apiFetchUpload(`/file/${folderPath}`, "POST", files[i]);
 
                 if (res.status < 200) {
                     console.log(await res.text());
