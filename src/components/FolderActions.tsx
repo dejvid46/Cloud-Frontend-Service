@@ -7,13 +7,15 @@ import DownloadIcon from '@mui/icons-material/Download';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { GridSelectionModel } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 import { styled } from '@mui/material/styles';
 
 import { useState } from 'react';
 import { tableData } from './FolderTable';
 import ModalHook from './ModalHook';
-import { apiFetch, apiFetchDownload } from '../features/Fetch';
+import { fileURL } from '../features/Router';
+import { apiFetch, apiFetchDownload, apiFetchUpload } from '../features/Fetch';
 import { useRecoilValue } from 'recoil';
 import { folderPath as folderPathState } from '../features/Atoms';
 
@@ -31,31 +33,39 @@ interface ActionsProps {
     setRows: React.Dispatch<React.SetStateAction<tableData[]>>
 }
 
+const Div = styled('div')({
+    textAlign: "center",
+    padding: "20px",
+    border: "3px dashed #eeeeee",
+    backgroundColor: "#fafafa",
+    color: "#bdbdbd"
+});
+
 const Input = styled('input')({
-    display: 'none',
+    display: "none"
 });
 
 export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProps) => {
 
-    const folderPath = useRecoilValue(folderPathState);
+    const folderPath = useRecoilValue(folderPathState) || fileURL();
 
     const [open, setOpen] = useState(false);
 
-    const [pictures, setPictures] = useState<FileList>();
+    const [files, setFiles] = useState<FileList>();
 
     const speedDialOnClick = (item: string) => {
         switch (item) {
             case "Open":
-                openFiles()
+                openFiles();
                 break;
             case "Delete":
-                deleteFiles()
+                deleteFiles();
                 break;
             case "Download":
-                download()
+                download();
                 break;
             case "Upload":
-                upload()
+                setOpen(true);
                 break;
             default:
                 break;
@@ -145,8 +155,19 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
         })
     }
 
-    const upload = () => {
-        setOpen(true);
+    const upload = async () => {
+        if(files !== undefined){
+            for (let i = 0; i < files.length; i++) {
+
+                let res = await apiFetchUpload(`/file${folderPath === "" ? "/" : folderPath}`, "POST", files[i]);
+
+                if (res.status < 200) {
+                    console.log(await res.text());
+                }else{
+                    console.log(await res.text());
+                }
+            };
+        }
     }
 
     return (
@@ -168,19 +189,28 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 ))}
             </SpeedDial>
             <ModalHook open={open} setOpen={setOpen}>
-                <label htmlFor="contained-button-file">
-                    <Input onChange={e => setPictures(e.target.files || undefined)} id="contained-button-file" multiple type="file" />
-                    <Button variant="contained" component="span">
-                        Upload
-                    </Button>
+
+                <label htmlFor="file-upload">
+                    <Div>
+                        <Input id="file-upload" onChange={e => setFiles(e.target.files || undefined)} multiple type="file" />
+                        {files ? 
+                            files.length > 1 ?
+                                `count of files: ${files.length}`    
+                            :
+                                files[0].name
+                        : 
+                            "Upload files"
+                        }
+                    </Div>
                 </label>
+
                 {
-                    pictures ? 
-                        <Button variant="contained" component="span">Upload</Button>
+                    files ? 
+                        <Box sx={{ marginTop: "20px", textAlign: 'center'}}><Button variant="contained" onClick={upload} component="span">Upload</Button></Box>
                         :
                         <></>
                 }
-            </ModalHook>
+            </ModalHook>    
         </>
     );
 }

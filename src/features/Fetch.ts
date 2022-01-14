@@ -39,13 +39,29 @@ export const apiFetchDownload = async (path: string, method: string, fileName: s
     });
 }
 
-export function getCookie(name: string) {
+export const apiFetchUpload = async (path: string, method: string, file: File) => {
+    var formData = new FormData();
+    formData.append("file", file);
+
+    return await fetch(
+        path,
+        {
+            method: method,
+            headers: new Headers({
+                'token': getCookie("token") || ""
+            }),
+            body: formData
+        }
+    )
+}
+
+export const getCookie = (name: string) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     return parts.length === 2 ? (parts.pop() || "").split(';').shift(): undefined;
 }
 
-export function setCookie(name: string, val: string) {
+export const setCookie = (name: string, val: string) => {
     const date = new Date();
     const value = val;
 
@@ -54,7 +70,7 @@ export function setCookie(name: string, val: string) {
     document.cookie = name+"="+value+"; expires="+date.toUTCString()+"; path=/";
 }
 
-export function deleteCookie(name: string) {
+export const deleteCookie = (name: string) => {
     const date = new Date();
 
     // Set it expire in -1 days
