@@ -28,13 +28,11 @@ export default () => {
         ).arrayBuffer()
         .then((buffer) => {
             setData(_arrayBufferToBase64(buffer));
-
-
         });
     }
 
     useEffect(() => {
-        if(fileURL() === folderPath){
+        if((fileURL() === folderPath) && (folderPath.endsWith(".png") || folderPath.endsWith(".jpg") || folderPath.endsWith(".gif"))){
             getData();
         }
     }, [folderPath]);
@@ -67,11 +65,15 @@ export default () => {
         <>
             {
                 (
-                    (folderPath.endsWith(".png") && (<Image />)) ||
-                    (folderPath.endsWith(".jpg") && (<Image />)) ||
-                    (folderPath.endsWith(".gif") && (<Image />)) ||
-                    (folderPath.endsWith(".txt") && (<Text />)) ||
-                    ((<Text />))
+                    folderPath.endsWith(".jpg") ? 
+                        <Image />
+                    : folderPath.endsWith(".png") ? 
+                        <Image />
+                    : folderPath.endsWith(".gif") ?
+                        <Image />
+                    :
+                        <Text />
+                    
                 )
             }
         </>

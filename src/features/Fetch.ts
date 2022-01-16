@@ -35,7 +35,7 @@ export const apiFetchDownload = async (path: string, method: string, fileName: s
         a.download = fileName;
         document.body.appendChild(a);
         a.click();
-        a.remove();
+        document.body.removeChild(a);
     });
 }
 

@@ -16,8 +16,8 @@ import { tableData } from './FolderTable';
 import ModalHook from './ModalHook';
 import { fileURL } from '../features/Router';
 import { apiFetch, apiFetchDownload, apiFetchUpload } from '../features/Fetch';
-import { useRecoilValue } from 'recoil';
-import { folderPath as folderPathState } from '../features/Atoms';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { folderPath as folderPathState, folderTree as folderTreeState } from '../features/Atoms';
 
 const actions = [
     { icon: <LaunchIcon />, name: 'Open' },
@@ -30,7 +30,7 @@ interface ActionsProps {
     table: tableData[],
     selectionModel: GridSelectionModel,
     setSelectionModel: React.Dispatch<React.SetStateAction<GridSelectionModel>>,
-    setRows: React.Dispatch<React.SetStateAction<tableData[]>>
+    setRows: React.Dispatch<React.SetStateAction<tableData[] | undefined>>
 }
 
 const Div = styled('div')({
@@ -45,13 +45,19 @@ const Input = styled('input')({
     display: "none"
 });
 
+function delay(time: number) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+
 export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProps) => {
+
+    const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
 
     const [open, setOpen] = useState(false);
 
-    const [files, setFiles] = useState<FileList>();
+    const [files, setFiles] = useState<FileList | undefined>();
 
     const speedDialOnClick = (item: string) => {
         switch (item) {
@@ -69,6 +75,18 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 break;
             default:
                 break;
+        }
+    }
+
+    const refreshFolder = async () => {
+        const res = await apiFetch(`/folder_tree`, "GET");
+
+        if (res.status < 300) {
+
+            setFolderTree(await res.json());
+            
+        }else{
+            console.log(await res.text());
         }
     }
 
@@ -117,7 +135,11 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 console.log(await res.text());
             }
         });
-        refreshTableData();
+
+        delay(500).then(() => {
+            refreshTableData();
+            refreshFolder();
+        })
     }
 
     const refreshTableData = async () => {
@@ -169,6 +191,9 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 }
             };
         }
+        refreshTableData();
+        refreshFolder();
+        setOpen(false);
     }
 
     return (
@@ -211,7 +236,7 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                         :
                         <></>
                 }
-            </ModalHook>    
+            </ModalHook>
         </>
     );
 }

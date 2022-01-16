@@ -1,16 +1,18 @@
-import { useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams, GridApi, GridCellValue } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { route, fileURL } from '../features/Router';
-import { GridSelectionModel } from '@mui/x-data-grid';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import PhotoIcon from '@mui/icons-material/Photo';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import MusicVideoIcon from '@mui/icons-material/MusicVideo';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+
+import { apiFetchDownload } from '../features/Fetch';
 import FolderActions from './FolderActions';
+import { useState } from 'react';
+import { route, fileURL } from '../features/Router';
+import { GridSelectionModel } from '@mui/x-data-grid';
 
 function secondsToDhms(seconds: number) {
     seconds = Number(seconds);
@@ -41,7 +43,7 @@ export interface tableData {
 interface TableProps {
     table: tableData[],
     rowsCount: number,
-    setRows: React.Dispatch<React.SetStateAction<tableData[]>>
+    setRows: React.Dispatch<React.SetStateAction<tableData[] | undefined>>
 }
 
 const columns: GridColDef[] = [
@@ -114,7 +116,7 @@ const columns: GridColDef[] = [
     {
         field: 'buttons',
         headerName: '',
-        width: 200,
+        width: 230,
         sortable: false,
         renderCell: (params) => {
 
@@ -148,16 +150,24 @@ const columns: GridColDef[] = [
                 }
             };
 
-            const deleteItem = (e: any) => {
+            const download = async (e: any) => {
                 e.stopPropagation(); // don't select this row after clicking
+    
+                const fileType = (rowData().name+"").split(".")[1] || "folder";
 
-                return alert(JSON.stringify(rowData(), null, 4));
+                let fileUrl = fileURL();
+
+                fileUrl = fileUrl === "/" ? "" : fileUrl;
+    
+                if(fileType !== "folder"){
+                    await apiFetchDownload(`/file${fileUrl}/${rowData().name}`, "GET", rowData().name+"");
+                }
             };
       
             return (
                 <Stack spacing={2} direction="row">
                     <Button onClick={open} variant="outlined">Open</Button>
-                    <Button onClick={deleteItem} variant="outlined">Delete</Button>
+                    <Button onClick={download} variant="outlined">Download</Button>
                 </Stack>
             );
         }
