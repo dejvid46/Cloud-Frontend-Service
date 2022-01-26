@@ -45,7 +45,7 @@ export default () => {
             setCookie("token", (await res.json()).token || "");
             window.location.replace("showfolder");
         }else{
-            enqueueSnackbar("<h1>KUKUUU</h1>", { variant: "error" });
+            enqueueSnackbar(await res.text(), { variant: "error" });
         }
 
     }
