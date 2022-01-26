@@ -3,6 +3,7 @@ import Router from '../features/Router';
 import routes from '../routes/mainRoutes';
 import CssBaseline from '@mui/material/CssBaseline';
 import { RecoilRoot } from 'recoil';
+import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme({
     palette: {
@@ -20,7 +21,9 @@ function App() {
             <CssBaseline/>
             <RecoilRoot>
                 <ThemeProvider theme={theme}>
+                    <SnackbarProvider maxSnack={4}>
                         <Router routes={routes} />
+                    </SnackbarProvider>
                 </ThemeProvider>
             </RecoilRoot>
         </div>

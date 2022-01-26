@@ -6,12 +6,15 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { apiFetch, setCookie, getCookie, deleteCookie } from '../features/Fetch';
+import { useSnackbar, VariantType } from 'notistack';
 
 
 export default () => {
 
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    
 
     const isLoged = async () => {
         const res = await apiFetch("/check_login", "POST",
@@ -42,7 +45,7 @@ export default () => {
             setCookie("token", (await res.json()).token || "");
             window.location.replace("showfolder");
         }else{
-            console.log(await res.text());
+            enqueueSnackbar("<h1>KUKUUU</h1>", { variant: "error" });
         }
 
     }
