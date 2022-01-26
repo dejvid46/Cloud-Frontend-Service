@@ -1,18 +1,33 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { apiFetch, setCookie } from '../features/Fetch';
-import { route } from '../features/Router';
+import { apiFetch, setCookie, getCookie, deleteCookie } from '../features/Fetch';
 
 
 export default () => {
 
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
+
+    const isLoged = async () => {
+        const res = await apiFetch("/check_login", "POST",
+            {
+                token: getCookie("token") || ""
+            }
+        )
+
+        if (res.status < 300) {
+            window.location.replace("showfolder");
+        }else{
+            deleteCookie("token");
+        }
+    }
+
+    isLoged();
 
     const valid = async () => {
 
@@ -25,7 +40,7 @@ export default () => {
 
         if (res.status < 300) {
             setCookie("token", (await res.json()).token || "");
-            route("showfolder")
+            window.location.replace("showfolder");
         }else{
             console.log(await res.text());
         }

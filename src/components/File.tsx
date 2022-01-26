@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { getCookie } from '../features/Fetch';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import CircularProgress from '@mui/material/CircularProgress';
+import Button from '@mui/material/Button';
+
+import { useState, useEffect } from 'react';
 import { fileURL } from '../features/Router';
 import { useRecoilValue } from 'recoil';
 import { folderPath as folderPathState } from '../features/Atoms';
@@ -17,12 +21,13 @@ function _arrayBufferToBase64( buffer: ArrayBuffer ) {
 }
 
 
+
 export default () => {
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
-    let [data, setData] = useState("")
+    let [data, setData] = useState<string | undefined>()
 
-    const getData = async () => {
+    const fetchImg = async () => {
         (await 
             apiFetch(`/file${folderPath}`, "GET")
         ).arrayBuffer()
@@ -31,50 +36,122 @@ export default () => {
         });
     }
 
+    const fetchText = async () => {
+        (await 
+            apiFetch(`/file${folderPath}`, "GET")
+        ).text()
+        .then((text) => {
+            setData(text);
+        });
+    }
+
     useEffect(() => {
-        if((fileURL() === folderPath) && (folderPath.endsWith(".png") || folderPath.endsWith(".jpg") || folderPath.endsWith(".gif"))){
-            getData();
+        setData(undefined);
+        if(fileURL() === folderPath) {
+            if(
+                folderPath.endsWith(".png") || 
+                folderPath.endsWith(".jpg") || 
+                folderPath.endsWith(".gif") || 
+                folderPath.endsWith(".mp3")
+            ){
+                fetchImg();
+            }
+            if(
+                folderPath.endsWith(".txt")  
+            ){
+                fetchText();
+            }
         }
     }, [folderPath]);
 
     const Image = () => {
         return (
-            <>
-                <Box sx={{
-                    margin: "auto"
-                }}>
-                    <img src={"data: image/png;base64,"+data} alt="photo" />
-                </Box>
-            </>
+            <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+            >
+                <Paper>
+                    <Box sx={{ margin: "20px"}}>
+                        <img style={{ maxWidth: "100%", maxHeight: "500px" }} src={"data: image/png;base64,"+data} alt="photo" />
+                    </Box>
+                </Paper>
+            </Grid>
         )
     }
 
     const Text = () => {
         return (
-            <>
-                <Box sx={{
-                    margin: "auto"
-                }}>
-                    {folderPath}
-                </Box>
-            </>
+            <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+            >
+                <Paper>
+                    <Box sx={{ margin: "20px"}}>
+                        <pre style={{ width: "100%", overflow: "auto"}}>
+                            {
+                                data
+                            }
+                        </pre>
+                    </Box>
+                </Paper>
+            </Grid>
+        )
+    }
+
+    const MP3 = () => {
+        return (
+            <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+            >
+                <Paper>
+                    <Box sx={{ margin: "20px"}}>
+                        <audio controls={true} >
+                            <source src={`data:audio/wav;base64,${data}`} />
+                        </audio>
+                    </Box>
+                </Paper>
+            </Grid>
         )
     }
 
     return (
         <>
             {
-                (
-                    folderPath.endsWith(".jpg") ? 
-                        <Image />
-                    : folderPath.endsWith(".png") ? 
-                        <Image />
-                    : folderPath.endsWith(".gif") ?
-                        <Image />
-                    :
-                        <Text />
-                    
-                )
+                data ? 
+                    (
+                        folderPath.endsWith(".jpg") ? 
+                            <Image />
+                        : folderPath.endsWith(".png") ? 
+                            <Image />
+                        : folderPath.endsWith(".gif") ?
+                            <Image />
+                        : folderPath.endsWith(".mp3") ?
+                            <MP3 />
+                        :
+                            <Text />
+                        
+                    )
+                :
+                <Grid
+                    container
+                    spacing={0}
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ minHeight: "60vh" }}
+                >
+                    <CircularProgress/>
+                </Grid>
             }
         </>
     )

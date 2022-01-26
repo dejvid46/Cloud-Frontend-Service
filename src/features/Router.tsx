@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Err404 from '../components/Err404';
+import Login from '../components/Login';
 import { useRecoilState } from 'recoil';
 import { folderPath as folderPathState } from '../features/Atoms';
+import { getCookie } from '../features/Fetch';
 
 export interface RouterProps {
     routes: Array<Route>
@@ -24,7 +26,13 @@ export default ({routes}: RouterProps) => {
 
     return (
         <>
-            {routes.find(({name, component}) => name === "/"+url.split("/")[1])?.component || <Err404 />}
+            {
+                getCookie("token")
+                ?
+                routes.find(({name, component}) => name === "/"+url.split("/")[1])?.component || <Err404 />
+                :
+                <Login />
+            }
         </>
     );
 }

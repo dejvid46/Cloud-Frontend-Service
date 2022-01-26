@@ -13,6 +13,7 @@ import * as React from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { route } from '../features/Router';
+import { deleteCookie } from '../features/Fetch';
 
 
 export default () => {
@@ -29,6 +30,7 @@ export default () => {
     };
 
     const logout = () => {
+        deleteCookie("token");
         window.location.href = "/login";
     }
 
