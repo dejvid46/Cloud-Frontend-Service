@@ -1,17 +1,16 @@
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { user as userState } from '../features/Atoms';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useState } from 'react';
 import { apiFetch } from '../features/Fetch';
 
 export default () => {
 
-    const [user, setUser] = useRecoilState(userState);
+    const user = useRecoilValue(userState);
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);

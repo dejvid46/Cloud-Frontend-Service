@@ -1,64 +1,46 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+
+import { useRecoilValue } from 'recoil';
+import { user as userState } from '../features/Atoms';
+import { useEffect, useState } from 'react';
+import { useSnackbar } from 'notistack';
+
 import UserCard from './UserCard';
 import { User } from './UserCard';
-import { useRecoilState } from 'recoil';
-import { users as usersState } from '../features/Atoms';
-
-const users2: User[] = [
-    {
-        id: 0,
-        name: "aaaaaaaaaaaaaaaa",
-        email: "pipik",
-        pass: "gd",
-        size: 32432,
-        path: "/",
-        status: 1,
-    },
-    {
-        id: 1,
-        name: "ofnkdfkldfsp",
-        email: "jhdsfhfs",
-        pass: "gd",
-        size: 32432,
-        path: "/",
-        status: 2,
-    },
-    {
-        id: 2,
-        name: "ofnkdfkldfsp",
-        email: "jhdsfhfs",
-        pass: "gd",
-        size: 32432,
-        path: "/",
-        status: 2,
-    },
-    {
-        id: 3,
-        name: "ofnkdfkldfsp",
-        email: "jhdsfhfs",
-        pass: "gd",
-        size: 32432,
-        path: "/",
-        status: 2,
-    }
-];
+import AddUser from './AddUser';
+import { apiFetch } from '../features/Fetch';
 
 export default () => {
 
-    const [users, setUsers] = useRecoilState(usersState);
+    const [users, setUsers] = useState([] as User[]);
+    const me = useRecoilValue(userState);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    setUsers(users2);
+    useEffect(() => {
+        getUsers();
+    }, []);
+
+    const getUsers = async () => {
+        const res = await apiFetch("/users", "GET");
+
+        if(res.status >= 300){
+            enqueueSnackbar(await res.text(), { variant: "error" });
+            return;
+        }
+        setUsers(await res.json())
+    }
 
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container sx={{ flexWrap: "wrap", display: "flex" }}>
                     {users.map((user, index) => (
-                        <UserCard user={user} key={index}/>
+                        <UserCard user={user} key={index} editable={user.status === 1 || user.id === me.id}/>
                     ))}
                 </Grid>
             </Box>
+            <AddUser />
         </>
     );
 }

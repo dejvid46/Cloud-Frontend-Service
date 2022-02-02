@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import Modal from './Modal';
 import { useState } from 'react';
 import { apiFetch } from '../features/Fetch';
+import { useSnackbar } from 'notistack';
 
 export interface User {
     id: number;
@@ -24,11 +25,12 @@ export interface User {
 
 interface UserCardProps {
     user: User, 
-    key: number
+    key: number,
+    editable: boolean
 }
 
 
-export default ({user, key}: UserCardProps) => {
+export default ({user, key, editable}: UserCardProps) => {
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
@@ -37,9 +39,12 @@ export default ({user, key}: UserCardProps) => {
     const [path, setPath] = useState(user.path);
     const [status, setStatus] = useState(user.status);
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
     const valid = async () => {
-        const res = await apiFetch("/user", "POST", 
+        const res = await apiFetch("/users/"+user.id, "PATCH", 
             {
+                id: user.id,
                 name: name,
                 email: email,
                 pass: pass,
@@ -49,10 +54,10 @@ export default ({user, key}: UserCardProps) => {
             }
         )
 
-        if (res.status < 200) {
-            console.log(await res.json())
+        if (res.status < 300) {
+            enqueueSnackbar(await res.text(), { variant: "success" });
         }else{
-            console.log(await res.text())
+            enqueueSnackbar(await res.text(), { variant: "error" });
         }
     }
 
@@ -111,7 +116,7 @@ export default ({user, key}: UserCardProps) => {
                 </Box>
             </CardContent>
             <CardActions>
-                <Modal buttonText='Edit'>
+                <Modal editable={editable} buttonText='Edit'>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <TextField 
@@ -131,7 +136,6 @@ export default ({user, key}: UserCardProps) => {
                                 onChange={e => setEmail(e.target.value)} 
                             />
                             <TextField 
-                                required 
                                 defaultValue={pass} 
                                 id="pass" 
                                 label="Password" 
@@ -179,7 +183,7 @@ export default ({user, key}: UserCardProps) => {
                     </Grid>
                     <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
                 </Modal>
-                <Button size="small">Delete</Button>
+                <Button disabled={editable} size="small">Delete</Button>
             </CardActions>
         </Card>
 

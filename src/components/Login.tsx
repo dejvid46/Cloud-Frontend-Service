@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { apiFetch, setCookie, getCookie, deleteCookie } from '../features/Fetch';
-import { useSnackbar, VariantType } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 
 export default () => {
@@ -30,7 +30,9 @@ export default () => {
         }
     }
 
-    isLoged();
+    useEffect(() => {
+        isLoged();
+    }, []);
 
     const valid = async () => {
 
@@ -39,14 +41,15 @@ export default () => {
                 email: email,
                 pass: pass
             }
-        )
+        );
 
-        if (res.status < 300) {
-            setCookie("token", (await res.json()).token || "");
-            window.location.replace("showfolder");
-        }else{
+        if (res.status >= 300) {
             enqueueSnackbar(await res.text(), { variant: "error" });
+            return;
         }
+
+        setCookie("token", (await res.json()).token || "");
+        window.location.replace("showfolder");
 
     }
 

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Router from '../features/Router';
 import routes from '../routes/mainRoutes';
@@ -20,11 +21,13 @@ function App() {
         <div className="App">
             <CssBaseline/>
             <RecoilRoot>
-                <ThemeProvider theme={theme}>
-                    <SnackbarProvider maxSnack={4}>
-                        <Router routes={routes} />
-                    </SnackbarProvider>
-                </ThemeProvider>
+                <Suspense fallback>
+                    <ThemeProvider theme={theme}>
+                        <SnackbarProvider maxSnack={4}>
+                            <Router routes={routes} />
+                        </SnackbarProvider>
+                    </ThemeProvider>
+                </Suspense>
             </RecoilRoot>
         </div>
     );

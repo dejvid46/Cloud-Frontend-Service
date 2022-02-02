@@ -1,6 +1,7 @@
 import { atom, selector } from "recoil";
 import { User } from '../components/UserCard';
 import { apiTree } from '../components/FileTree';
+import { apiFetch } from "./Fetch";
 
 export const counter = atom({
     key: 'counterState', // unique ID (with respect to other atoms/selectors)
@@ -12,16 +13,24 @@ export const drawer = atom({
     default: false, // default value (aka initial value)
 });
 
-export const user = atom({
+export const user = selector({
     key: 'userState',
-    default: {
-        id: 0,
-        name: "Pipik",
-        email: "sdhgfsh",
-        pass: "dsddgs",
-        size: 0,
-        path: "kdsgdk",
-        status: 2
+    get: async () => {
+        const res = await apiFetch("/user", "GET");
+
+        if(res.status >= 300){
+            return {
+                id: -1,
+                name: "",
+                email: "",
+                pass: "",
+                size: 0,
+                path: "",
+                status: -1
+            };
+        }
+
+        return await res.json();
     },
 });
 

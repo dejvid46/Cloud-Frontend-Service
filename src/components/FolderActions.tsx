@@ -8,6 +8,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { GridSelectionModel } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import { useSnackbar } from 'notistack';
 
 import { styled } from '@mui/material/styles';
 
@@ -52,12 +53,10 @@ function delay(time: number) {
 export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProps) => {
 
     const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
-
     const folderPath = useRecoilValue(folderPathState) || fileURL();
-
     const [open, setOpen] = useState(false);
-
     const [files, setFiles] = useState<FileList | undefined>();
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const speedDialOnClick = (item: string) => {
         switch (item) {
@@ -84,9 +83,9 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
         if (res.status < 300) {
 
             setFolderTree(await res.json());
-            
         }else{
-            console.log(await res.text());
+            console.log("bibu")
+            enqueueSnackbar(await res.text(), { variant: "error" });
         }
     }
 
@@ -129,10 +128,10 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 res = await apiFetch(`/file${filePath(id)}`, "DELETE")
             }
 
-            if (res.status < 200) {
-                console.log(await res.json());
+            if (res.status < 300) {
+                enqueueSnackbar(await res.text(), { variant: "success" });
             }else{
-                console.log(await res.text());
+                enqueueSnackbar(await res.text(), { variant: "error" });
             }
         });
 
@@ -146,7 +145,7 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
 
         const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "GET");
 
-        if (res.status < 300) {
+        if(res.status < 300){
 
             const json = await res.json();
             setRows(json.map((row: any, index: number) => {
@@ -159,7 +158,7 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
             }))
             setSelectionModel([]);
         }else{
-            console.log(await res.text());
+            enqueueSnackbar(await res.text(), { variant: "error" });
         }
     }
 
@@ -171,7 +170,9 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
             const fileType = table[id].name.split(".")[1] || "folder";
 
             if(fileType !== "folder"){
-                await apiFetchDownload(`/file${filePath(id)}`, "GET", table[id].name);
+                apiFetchDownload(`/file${filePath(id)}`, "GET", table[id].name)
+                    .then(_ => enqueueSnackbar("vse ok", { variant: "success" }))
+                    .catch(err => enqueueSnackbar(err.text(), { variant: "error" }));
             }
 
         })
@@ -184,10 +185,10 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 console.log(`/file${folderPath}`);
                 let res = await apiFetchUpload(`/file/${folderPath}`, "POST", files[i]);
 
-                if (res.status < 200) {
-                    console.log(await res.text());
+                if (res.status < 300) {
+                    enqueueSnackbar( await res.text(), { variant: "success" });
                 }else{
-                    console.log(await res.text());
+                    enqueueSnackbar( await res.text(), { variant: "error" });
                 }
             };
         }

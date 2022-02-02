@@ -115,7 +115,7 @@ export default () => {
             >
                 <Paper>
                     <Box sx={{ margin: "20px"}}>
-                        <audio controls={true} >
+                        <audio controls={true} autoPlay >
                             <source src={`data:audio/wav;base64,${data}`} />
                         </audio>
                     </Box>

@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 interface ModalProps extends React.HTMLProps<HTMLDivElement> {
     children: React.ReactNode,
     buttonText?: string,
+    editable?: boolean
 }
 
 const style = {
@@ -19,7 +20,7 @@ const style = {
     p: 4,
 };
   
-export default ({children, buttonText, ...rest}: ModalProps) => {
+export default ({children, buttonText, editable, ...rest}: ModalProps) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -28,7 +29,7 @@ export default ({children, buttonText, ...rest}: ModalProps) => {
         <div {...rest} >
 
             {
-                buttonText ? <Button onClick={handleOpen}>{buttonText}</Button> : <></>
+                buttonText ? <Button disabled={editable} onClick={handleOpen}>{buttonText}</Button> : <></>
             }
             <Modal
             open={open}

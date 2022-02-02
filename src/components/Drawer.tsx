@@ -9,7 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import { drawer as drawerState, user as userState } from '../features/Atoms';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import FileTree from './FileTree';
 import { route } from '../features/Router';
 
@@ -21,7 +21,7 @@ export default () => {
 
     const [drawer, setDrawer] = useRecoilState(drawerState);
 
-    const [user, setUser] = useRecoilState(userState);
+    const user = useRecoilValue(userState);
 
     const MyDrawer = ({children}: DrawerProps) => (
         <>
