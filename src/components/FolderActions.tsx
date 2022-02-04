@@ -18,13 +18,18 @@ import ModalHook from './ModalHook';
 import { fileURL } from '../features/Router';
 import { apiFetch, apiFetchDownload, apiFetchUpload } from '../features/Fetch';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { folderPath as folderPathState, folderTree as folderTreeState } from '../features/Atoms';
+import { folderPath as folderPathState, folderTree as folderTreeState, user as userState } from '../features/Atoms';
 
-const actions = [
+const actionsCanUpload = [
     { icon: <LaunchIcon />, name: 'Open' },
     { icon: <DeleteIcon />, name: 'Delete' },
     { icon: <DownloadIcon />, name: 'Download' },
     { icon: <FileUploadIcon />, name: 'Upload' }
+];
+
+const actionsCanDownload = [
+    { icon: <LaunchIcon />, name: 'Open' },
+    { icon: <DownloadIcon />, name: 'Download' }
 ];
 
 interface ActionsProps {
@@ -57,6 +62,7 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
     const [open, setOpen] = useState(false);
     const [files, setFiles] = useState<FileList | undefined>();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const user = useRecoilValue(userState);
 
     const speedDialOnClick = (item: string) => {
         switch (item) {
@@ -205,15 +211,28 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 direction="left"
                 icon={<SpeedDialIcon />}
             >
-                {actions.map((action) => (
-                    <SpeedDialAction
-                        key={action.name}
-                        data-index={action.name}
-                        icon={action.icon}
-                        tooltipTitle={action.name}
-                        onClick={() => speedDialOnClick(action.name)}
-                    />
-                ))}
+                {
+                user.status !== 4 ?
+                    actionsCanUpload.map((action) => (
+                        <SpeedDialAction
+                            key={action.name}
+                            data-index={action.name}
+                            icon={action.icon}
+                            tooltipTitle={action.name}
+                            onClick={() => speedDialOnClick(action.name)}
+                        />
+                    ))
+                :
+                    actionsCanDownload.map((action) => (
+                        <SpeedDialAction
+                            key={action.name}
+                            data-index={action.name}
+                            icon={action.icon}
+                            tooltipTitle={action.name}
+                            onClick={() => speedDialOnClick(action.name)}
+                        />
+                    ))
+                }
             </SpeedDial>
             <ModalHook open={open} setOpen={setOpen}>
 

@@ -14,6 +14,7 @@ import { fileURL } from '../features/Router';
 import { apiFetch, apiFetchUpload } from '../features/Fetch';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { folderPath as folderPathState, folderTree as folderTreeState } from '../features/Atoms';
+import { useSnackbar } from 'notistack';
 
 const Div = styled('div')({
     textAlign: "center",
@@ -34,6 +35,7 @@ export default () => {
     const [open, setOpen] = useState(false);
     const [files, setFiles] = useState<FileList | undefined>();
     const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
 
@@ -102,13 +104,12 @@ export default () => {
         if(files !== undefined){
             for (let i = 0; i < files.length; i++) {
 
-                console.log(`/file${folderPath}`);
                 let res = await apiFetchUpload(`/file/${folderPath}`, "POST", files[i]);
 
-                if (res.status < 200) {
-                    console.log(await res.text());
+                if (res.status < 300) {
+                    enqueueSnackbar( await res.text(), { variant: "success" });
                 }else{
-                    console.log(await res.text());
+                    enqueueSnackbar( await res.text(), { variant: "error" });
                 }
             };
         }

@@ -160,7 +160,7 @@ const columns: GridColDef[] = [
                 fileUrl = fileUrl === "/" ? "" : fileUrl;
     
                 if(fileType !== "folder"){
-                    await apiFetchDownload(`/file${fileUrl}/${rowData().name}`, "GET", rowData().name+"");
+                    apiFetchDownload(`/file${fileUrl}/${rowData().name}`, "GET", rowData().name+"");
                 }
             };
       

@@ -18,7 +18,7 @@ export const apiFetch = async (path: string, method: string, json?: any) => {
 
 export const apiFetchDownload = async (path: string, method: string, fileName: string) => {
 
-    return await fetch(
+    const res = fetch(
         path,
         {
             method: method,
@@ -27,16 +27,22 @@ export const apiFetchDownload = async (path: string, method: string, fileName: s
             })
         }
     )
-    .then(response => response.blob())
-    .then(blob => {
-        var url = window.URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
+
+    if((await res).status < 300){
+        res.then(response => response.blob())
+        .then(blob => {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+        return "file downloaded";
+    }else{ 
+        return await (await res).text();
+    }
 }
 
 export const apiFetchUpload = async (path: string, method: string, file: File) => {

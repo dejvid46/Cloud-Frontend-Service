@@ -3,41 +3,54 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+
 import { user as userState } from '../features/Atoms';
-import { useRecoilValue } from 'recoil';
-import { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { useState, useEffect } from 'react';
 import { apiFetch } from '../features/Fetch';
+import { useSnackbar } from 'notistack';
 
 export default () => {
 
-    const user = useRecoilValue(userState);
+    const [user, setUser] = useRecoilState(userState);
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
     const [pass, setPass] = useState(user.pass);
-    const [size, setSize] = useState(user.size);
-    const [path, setPath] = useState(user.path);
-    const [status, setStatus] = useState(user.status);
 
-    const valid = async () => {
-        const res = await apiFetch("/user", "POST", 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+    const editMe = async () => {
+        const res = await apiFetch("/user", "PATCH", 
             {
                 name: name,
                 email: email,
-                pass: pass,
-                size: size,
-                path: path,
-                status: status
+                pass: pass
             }
         )
 
-        if (res.status < 200) {
-            console.log(await res.json())
+        if (res.status < 300) {
+            enqueueSnackbar(await res.text(), { variant: "success" });
+            refreshMe();
         }else{
-            console.log(await res.text())
+            enqueueSnackbar(await res.text(), { variant: "error" });
         }
     }
+
+    const refreshMe = async () => {
+        const res = await apiFetch("/user", "GET");
+
+        if(res.status >= 300) return;
+
+        setUser(await res.json());
+
+    }
     
+    useEffect(() => {
+        if(Object.keys(user).length === 0) {
+            refreshMe();
+        }
+    }, []);
 
     return (
         <>
@@ -46,8 +59,7 @@ export default () => {
                 margin: "0 auto",
                 verticalAlign: "middle"
             }}>
-                <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Box>
                             <TextField 
                                 sx={{ margin: "10px" }}
                                 required 
@@ -78,52 +90,8 @@ export default () => {
                                 size="medium" 
                                 onChange={e => setPass(e.target.value)} 
                             />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField 
-                                sx={{ margin: "10px" }}
-                                required 
-                                defaultValue={path} 
-                                id="path" 
-                                label="Path" 
-                                variant="standard"
-                                size="medium" 
-                                onChange={e => setPath(e.target.value)} 
-                            />
-                            <TextField 
-                                sx={{ margin: "10px" }}
-                                required 
-                                defaultValue={status} 
-                                id="status" 
-                                label="Status" 
-                                variant="standard" 
-                                type="number"
-                                size="medium"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} 
-                            />
-                            <TextField 
-                                sx={{ margin: "10px" }}
-                                required 
-                                defaultValue={size} 
-                                id="size" 
-                                label="Size" 
-                                variant="standard" 
-                                type="number"
-                                size="medium"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">Mb</InputAdornment>
-                                }}
-                                onChange={e => parseInt(e.target.value) ? setSize(parseInt(e.target.value)) : ""} 
-                            />
-                        </Grid>
-                    </Grid>
-                <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
+                        </Box>
+                <Button sx={{ marginTop: "20px" }} variant="contained" onClick={editMe}>Submit</Button>
             </Box>
         </>
     )

@@ -34,7 +34,7 @@ export default () => {
         isLoged();
     }, []);
 
-    const valid = async () => {
+    const login = async () => {
 
         const res = await apiFetch("/login", "POST", 
             {
@@ -87,7 +87,7 @@ export default () => {
                             onChange={e => setPass(e.target.value)} 
                         />
                         <br />
-                        <Button color="primary" style={{margin: "20px"}} variant="contained" onClick={valid}>Submit</Button>
+                        <Button color="primary" style={{margin: "20px"}} variant="contained" onClick={login}>Submit</Button>
                     </Container>
                 </Paper>
             </Grid>

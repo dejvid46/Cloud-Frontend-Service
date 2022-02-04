@@ -26,11 +26,12 @@ export interface User {
 interface UserCardProps {
     user: User, 
     key: number,
+    setUsers: React.Dispatch<React.SetStateAction<User[]>>,
     editable: boolean
 }
 
 
-export default ({user, key, editable}: UserCardProps) => {
+export default ({user, key, editable, setUsers}: UserCardProps) => {
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
@@ -41,7 +42,7 @@ export default ({user, key, editable}: UserCardProps) => {
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const valid = async () => {
+    const addUser = async () => {
         const res = await apiFetch("/users/"+user.id, "PATCH", 
             {
                 id: user.id,
@@ -52,13 +53,35 @@ export default ({user, key, editable}: UserCardProps) => {
                 path: path,
                 status: status
             }
-        )
+        );
 
         if (res.status < 300) {
             enqueueSnackbar(await res.text(), { variant: "success" });
+            getUsers();
         }else{
             enqueueSnackbar(await res.text(), { variant: "error" });
         }
+    }
+
+    const deleteUser = async () => {
+        const res = await apiFetch("/users/"+user.id, "DELETE");
+
+        if (res.status < 300) {
+            enqueueSnackbar(await res.text(), { variant: "success" });
+            getUsers();
+        }else{
+            enqueueSnackbar(await res.text(), { variant: "error" });
+        }
+    }
+
+    const getUsers = async () => {
+        const res = await apiFetch("/users", "GET");
+
+        if(res.status >= 300){
+            enqueueSnackbar(await res.text(), { variant: "error" });
+            return;
+        }
+        setUsers(await res.json())
     }
 
     return (
@@ -181,9 +204,9 @@ export default ({user, key, editable}: UserCardProps) => {
                             />
                         </Grid>
                     </Grid>
-                    <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
+                    <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={addUser}>Submit</Button>
                 </Modal>
-                <Button disabled={editable} size="small">Delete</Button>
+                <Button onClick={deleteUser} disabled={editable} size="small">Delete</Button>
             </CardActions>
         </Card>
 

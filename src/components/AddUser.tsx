@@ -9,8 +9,12 @@ import { apiFetch } from '../features/Fetch';
 import { User } from './UserCard';
 import { useSnackbar } from 'notistack';
 
+interface AddUserProps {
+    setUsers: React.Dispatch<React.SetStateAction<User[]>>
+}
 
-export default () => {
+
+export default ({setUsers}: AddUserProps) => {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -21,7 +25,7 @@ export default () => {
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const valid = async () => {
+    const editUser = async () => {
 
         console.log({
             name: name,
@@ -46,9 +50,20 @@ export default () => {
 
         if (res.status < 300) {
             enqueueSnackbar(await res.text(), { variant: "success" });
+            getUsers();
         }else{
             enqueueSnackbar(await res.text(), { variant: "error" });
         }
+    }
+
+    const getUsers = async () => {
+        const res = await apiFetch("/users", "GET");
+
+        if(res.status >= 300){
+            enqueueSnackbar(await res.text(), { variant: "error" });
+            return;
+        }
+        setUsers(await res.json())
     }
 
     return (
@@ -118,7 +133,7 @@ export default () => {
                     />
                 </Grid>
             </Grid>
-            <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={valid}>Submit</Button>
+            <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={editUser}>Submit</Button>
         </Modal>
 
     );

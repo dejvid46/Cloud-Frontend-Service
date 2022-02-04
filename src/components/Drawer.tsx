@@ -8,10 +8,13 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PersonIcon from '@mui/icons-material/Person';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
+
 import { drawer as drawerState, user as userState } from '../features/Atoms';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import FileTree from './FileTree';
 import { route } from '../features/Router';
+import { useEffect } from 'react';
+import { apiFetch } from '../features/Fetch';
 
 const drawerWidth = 240;
 
@@ -21,7 +24,23 @@ export default () => {
 
     const [drawer, setDrawer] = useRecoilState(drawerState);
 
-    const user = useRecoilValue(userState);
+    const [user, setUser] = useRecoilState(userState);
+
+
+    const refreshMe = async () => {
+        const res = await apiFetch("/user", "GET");
+
+        if(res.status >= 300) return;
+
+        setUser(await res.json());
+
+    }
+
+    useEffect(() => {
+        if(Object.keys(user).length === 0) {
+            refreshMe();
+        }
+    }, []);
 
     const MyDrawer = ({children}: DrawerProps) => (
         <>
