@@ -26,15 +26,6 @@ export default ({setUsers}: AddUserProps) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const editUser = async () => {
-
-        console.log({
-            name: name,
-            email: email,
-            pass: pass,
-            size: size,
-            path: path,
-            status: status
-        } as User)
         
         const res = await apiFetch("/users", "POST", 
             {

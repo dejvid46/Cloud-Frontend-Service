@@ -26,12 +26,12 @@ export interface User {
 interface UserCardProps {
     user: User, 
     key: number,
-    setUsers: React.Dispatch<React.SetStateAction<User[]>>,
-    editable: boolean
+    editable: boolean,
+    getUsers: () => Promise<void>
 }
 
 
-export default ({user, key, editable, setUsers}: UserCardProps) => {
+export default ({user, key, editable, getUsers}: UserCardProps) => {
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
@@ -72,16 +72,6 @@ export default ({user, key, editable, setUsers}: UserCardProps) => {
         }else{
             enqueueSnackbar(await res.text(), { variant: "error" });
         }
-    }
-
-    const getUsers = async () => {
-        const res = await apiFetch("/users", "GET");
-
-        if(res.status >= 300){
-            enqueueSnackbar(await res.text(), { variant: "error" });
-            return;
-        }
-        setUsers(await res.json())
     }
 
     return (

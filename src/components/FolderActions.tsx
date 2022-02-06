@@ -5,26 +5,24 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import { GridSelectionModel } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import { useSnackbar } from 'notistack';
 
-import { styled } from '@mui/material/styles';
-
-import { useState } from 'react';
 import { tableData } from './FolderTable';
-import ModalHook from './ModalHook';
 import { fileURL } from '../features/Router';
-import { apiFetch, apiFetchDownload, apiFetchUpload } from '../features/Fetch';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { folderPath as folderPathState, folderTree as folderTreeState, user as userState } from '../features/Atoms';
+import { apiFetch, apiFetchDownload } from '../features/Fetch';
+import { useRecoilValue } from 'recoil';
+import { folderPath as folderPathState, user as userState } from '../features/Atoms';
 
 const actionsCanUpload = [
     { icon: <LaunchIcon />, name: 'Open' },
     { icon: <DeleteIcon />, name: 'Delete' },
     { icon: <DownloadIcon />, name: 'Download' },
-    { icon: <FileUploadIcon />, name: 'Upload' }
+    { icon: <FileUploadIcon />, name: 'Upload' },
+    { icon: <CreateNewFolderIcon />, name: 'Add Folder' },
+    { icon: <DriveFileRenameOutlineIcon />, name: 'Rename Folder' }
 ];
 
 const actionsCanDownload = [
@@ -35,32 +33,17 @@ const actionsCanDownload = [
 interface ActionsProps {
     table: tableData[],
     selectionModel: GridSelectionModel,
-    setSelectionModel: React.Dispatch<React.SetStateAction<GridSelectionModel>>,
-    setRows: React.Dispatch<React.SetStateAction<tableData[] | undefined>>
+    refresh: () => Promise<void>,
+    upload: () => void
 }
-
-const Div = styled('div')({
-    textAlign: "center",
-    padding: "20px",
-    border: "3px dashed #eeeeee",
-    backgroundColor: "#fafafa",
-    color: "#bdbdbd"
-});
-
-const Input = styled('input')({
-    display: "none"
-});
 
 function delay(time: number) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
 
-export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProps) => {
+export default ({table, selectionModel, refresh, upload}: ActionsProps) => {
 
-    const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
     const folderPath = useRecoilValue(folderPathState) || fileURL();
-    const [open, setOpen] = useState(false);
-    const [files, setFiles] = useState<FileList | undefined>();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const user = useRecoilValue(userState);
 
@@ -76,22 +59,16 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 download();
                 break;
             case "Upload":
-                setOpen(true);
+                upload();
+                break;
+            case "Add Folder":
+                //addFolder();
+                break;
+            case "Rename Folder": 
+                //renameFolder();
                 break;
             default:
                 break;
-        }
-    }
-
-    const refreshFolder = async () => {
-        const res = await apiFetch(`/folder_tree`, "GET");
-
-        if (res.status < 300) {
-
-            setFolderTree(await res.json());
-        }else{
-            console.log("bibu")
-            enqueueSnackbar(await res.text(), { variant: "error" });
         }
     }
 
@@ -142,30 +119,8 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
         });
 
         delay(500).then(() => {
-            refreshTableData();
-            refreshFolder();
+            refresh();
         })
-    }
-
-    const refreshTableData = async () => {
-
-        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "GET");
-
-        if(res.status < 300){
-
-            const json = await res.json();
-            setRows(json.map((row: any, index: number) => {
-                return {
-                    id: index,
-                    name: row.name,
-                    modified: row.date,
-                    size: row.size
-                } as tableData;
-            }))
-            setSelectionModel([]);
-        }else{
-            enqueueSnackbar(await res.text(), { variant: "error" });
-        }
     }
 
     const download = () => {
@@ -184,25 +139,6 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
         })
     }
 
-    const upload = async () => {
-        if(files !== undefined){
-            for (let i = 0; i < files.length; i++) {
-
-                console.log(`/file${folderPath}`);
-                let res = await apiFetchUpload(`/file/${folderPath}`, "POST", files[i]);
-
-                if (res.status < 300) {
-                    enqueueSnackbar( await res.text(), { variant: "success" });
-                }else{
-                    enqueueSnackbar( await res.text(), { variant: "error" });
-                }
-            };
-        }
-        refreshTableData();
-        refreshFolder();
-        setOpen(false);
-    }
-
     return (
         <>
             <SpeedDial
@@ -212,7 +148,7 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                 icon={<SpeedDialIcon />}
             >
                 {
-                user.status !== 4 ?
+                user.status <= 3 ?
                     actionsCanUpload.map((action) => (
                         <SpeedDialAction
                             key={action.name}
@@ -234,29 +170,6 @@ export default ({table, selectionModel, setSelectionModel, setRows}: ActionsProp
                     ))
                 }
             </SpeedDial>
-            <ModalHook open={open} setOpen={setOpen}>
-
-                <label htmlFor="file-upload">
-                    <Div>
-                        <Input id="file-upload" onChange={e => setFiles(e.target.files || undefined)} multiple type="file" />
-                        {files ? 
-                            files.length > 1 ?
-                                `count of files: ${files.length}`    
-                            :
-                                files[0].name
-                        : 
-                            "Upload files"
-                        }
-                    </Div>
-                </label>
-
-                {
-                    files ? 
-                        <Box sx={{ marginTop: "20px", textAlign: 'center'}}><Button variant="contained" onClick={upload} component="span">Upload</Button></Box>
-                        :
-                        <></>
-                }
-            </ModalHook>
         </>
     );
 }

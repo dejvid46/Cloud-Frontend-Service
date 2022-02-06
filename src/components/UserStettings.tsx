@@ -36,7 +36,12 @@ export default () => {
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container sx={{ flexWrap: "wrap", display: "flex" }}>
                     {users.map((user, index) => (
-                        <UserCard user={user} key={index} setUsers={setUsers} editable={user.status === 1 || user.id === me.id}/>
+                        <UserCard 
+                            user={user} 
+                            key={index} 
+                            editable={user.status === 1 || user.id === me.id}
+                            getUsers={getUsers}
+                        />
                     ))}
                 </Grid>
             </Box>

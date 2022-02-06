@@ -43,7 +43,8 @@ export interface tableData {
 interface TableProps {
     table: tableData[],
     rowsCount: number,
-    setRows: React.Dispatch<React.SetStateAction<tableData[] | undefined>>
+    refresh: () => Promise<void>,
+    upload: () => void
 }
 
 const columns: GridColDef[] = [
@@ -174,7 +175,7 @@ const columns: GridColDef[] = [
     }
 ];
 
-export default ({ table, rowsCount, setRows }: TableProps) => {
+export default ({ table, rowsCount, refresh, upload}: TableProps) => {
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
 
@@ -193,10 +194,10 @@ export default ({ table, rowsCount, setRows }: TableProps) => {
                 selectionModel={selectionModel}
             />
             <FolderActions 
+                refresh={refresh}
+                upload={upload}
                 table={table}
                 selectionModel= {selectionModel}
-                setSelectionModel={setSelectionModel}
-                setRows={setRows}
             />
         </>
     );

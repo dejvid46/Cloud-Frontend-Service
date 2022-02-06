@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import TextField from "@mui/material/TextField";
 
 import { styled } from '@mui/material/styles';
 
@@ -30,14 +31,16 @@ const Input = styled('input')({
 
 export default () => {
 
+    const folderPath = useRecoilValue(folderPathState) || fileURL();
+
+    const [name, setName] = useState<string>("");
     const [table, setTable] = useState<tableData[] | undefined>();
     const [find, setFind] = useState(true);
-    const [open, setOpen] = useState(false);
+    const [openUpload, setOpenUpload] = useState(false);
+    const [openFolderRename, setOpenFolderRename] = useState(false);
     const [files, setFiles] = useState<FileList | undefined>();
     const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
-    const folderPath = useRecoilValue(folderPathState) || fileURL();
 
     useEffect(() => {
         if(fileURL() === folderPath){
@@ -68,11 +71,9 @@ export default () => {
         }
     }
 
-    const refreshFolder = async () => {
+    const refreshFolderTree = async () => {
         const res = await apiFetch(`/folder_tree`, "GET");
-
         if (res.status < 300) {
-
             setFolderTree(await res.json());
             
         }else{
@@ -100,7 +101,26 @@ export default () => {
         }
     }
 
-    const upload = async () => {
+    const refresh = async () => {
+        await Promise.all([
+            refreshTableData(),
+            refreshFolderTree()
+        ])
+    }
+
+    const rename = () => {
+        setOpenFolderRename(true);
+    }
+
+    const renaming = () => {
+
+    }
+
+    const upload = () => {
+        setOpenUpload(true);
+    }
+
+    const uploading = async () => {
         if(files !== undefined){
             for (let i = 0; i < files.length; i++) {
 
@@ -113,9 +133,8 @@ export default () => {
                 }
             };
         }
-        refreshTableData();
-        refreshFolder();
-        setOpen(false);
+        refresh();
+        setOpenUpload(false);
     }
 
     const tableHeight = window.screen.height * 0.60;
@@ -127,8 +146,13 @@ export default () => {
             <div id="tableDiv" style={{ height: `${tableHeight}px`, width: '100%' }}>
                 {
                     table !== undefined ? 
-                    table && table.length !== 0 ? 
-                            <FolderTable table={table}  rowsCount={rowsCount} setRows={setTable} /> 
+                        table && table.length !== 0 ? 
+                            <FolderTable 
+                                upload={upload} 
+                                refresh={refresh} 
+                                table={table} 
+                                rowsCount={rowsCount} 
+                            /> 
                         : find ?
                             <>
                                 <Grid
@@ -143,31 +167,9 @@ export default () => {
                                         <Typography variant="h6" component="div" style={{marginBottom: "5vh"}} >
                                             Folder is empty
                                         </Typography>
-                                        <Button onClick={() => setOpen(true)} variant="contained">Upload files</Button>
-
-                                        <ModalHook open={open} setOpen={setOpen}>
-
-                                            <label htmlFor="file-upload">
-                                                <Div>
-                                                    <Input id="file-upload" onChange={e => setFiles(e.target.files || undefined)} multiple type="file" />
-                                                    {files ? 
-                                                        files.length > 1 ?
-                                                            `count of files: ${files.length}`    
-                                                        :
-                                                            files[0].name
-                                                    : 
-                                                        "Upload files"
-                                                    }
-                                                </Div>
-                                            </label>
-
-                                            {
-                                                files ? 
-                                                    <Box sx={{ marginTop: "20px", textAlign: 'center'}}><Button variant="contained" onClick={upload} component="span">Upload</Button></Box>
-                                                    :
-                                                    <></>
-                                            }
-                                        </ModalHook>
+                                        <Button onClick={upload} variant="contained">Upload files</Button>
+                                        <br />
+                                        <Button onClick={rename} variant="contained">Renmae files</Button>
                                     </Grid>
                                 </Grid>
                             </>
@@ -204,6 +206,41 @@ export default () => {
                     </Grid>
                 }
             </div>
+            <ModalHook open={openUpload} setOpen={setOpenUpload}>
+
+                <label htmlFor="file-upload">
+                    <Div>
+                        <Input id="file-upload" onChange={e => setFiles(e.target.files || undefined)} multiple type="file" />
+                        {files ? 
+                            files.length > 1 ?
+                                `count of files: ${files.length}`    
+                            :
+                                files[0].name
+                        : 
+                            "Upload files"
+                        }
+                    </Div>
+                </label>
+
+                {
+                    files ? 
+                        <Box sx={{ marginTop: "20px", textAlign: 'center'}}>
+                            <Button variant="contained" onClick={uploading} component="span">
+                                Upload
+                            </Button>
+                        </Box>
+                    :
+                        <></>
+                }
+            </ModalHook>
+            <ModalHook open={openFolderRename} setOpen={setOpenFolderRename}>
+
+                <TextField 
+                    id="outlined-basic" 
+                    label="Outlined" 
+                    variant="outlined" 
+                />
+            </ModalHook>
         </>
     );
 }
