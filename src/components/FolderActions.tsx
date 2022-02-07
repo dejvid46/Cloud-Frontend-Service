@@ -35,13 +35,15 @@ interface ActionsProps {
     selectionModel: GridSelectionModel,
     refresh: () => Promise<void>,
     upload: () => void
+    addFolderOpen: () => void,
+    renameFolder: () => void
 }
 
 function delay(time: number) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
 
-export default ({table, selectionModel, refresh, upload}: ActionsProps) => {
+export default ({table, selectionModel, refresh, upload, addFolderOpen, renameFolder}: ActionsProps) => {
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -62,10 +64,10 @@ export default ({table, selectionModel, refresh, upload}: ActionsProps) => {
                 upload();
                 break;
             case "Add Folder":
-                //addFolder();
+                addFolderOpen();
                 break;
             case "Rename Folder": 
-                //renameFolder();
+                renameFolder();
                 break;
             default:
                 break;

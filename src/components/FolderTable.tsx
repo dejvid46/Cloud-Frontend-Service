@@ -44,7 +44,9 @@ interface TableProps {
     table: tableData[],
     rowsCount: number,
     refresh: () => Promise<void>,
-    upload: () => void
+    upload: () => void,
+    addFolderOpen: () => void,
+    renameFolder: () => void
 }
 
 const columns: GridColDef[] = [
@@ -175,7 +177,7 @@ const columns: GridColDef[] = [
     }
 ];
 
-export default ({ table, rowsCount, refresh, upload}: TableProps) => {
+export default ({ table, rowsCount, refresh, upload, addFolderOpen, renameFolder}: TableProps) => {
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
 
@@ -194,6 +196,8 @@ export default ({ table, rowsCount, refresh, upload}: TableProps) => {
                 selectionModel={selectionModel}
             />
             <FolderActions 
+                addFolderOpen={addFolderOpen}
+                renameFolder={renameFolder}
                 refresh={refresh}
                 upload={upload}
                 table={table}

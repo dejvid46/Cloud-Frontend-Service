@@ -33,13 +33,19 @@ export default () => {
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
 
-    const [name, setName] = useState<string>("");
-    const [table, setTable] = useState<tableData[] | undefined>();
     const [find, setFind] = useState(true);
-    const [openUpload, setOpenUpload] = useState(false);
+
+    const [rename, setRename] = useState<string>(folderPath.split("/").pop() || "");
     const [openFolderRename, setOpenFolderRename] = useState(false);
+
+    const [addFolder, setAddFolder] = useState<string>("");
+    const [openAddFolder, setOpenAddFolder] = useState(false);
+
     const [files, setFiles] = useState<FileList | undefined>();
     const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
+    const [openUpload, setOpenUpload] = useState(false);
+
+    const [table, setTable] = useState<tableData[] | undefined>();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -108,12 +114,40 @@ export default () => {
         ])
     }
 
-    const rename = () => {
+    const addFolderOpen = () => {
+        setOpenAddFolder(true);
+    }
+
+    const addingFolder = async () => {
+        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}/${addFolder}`, "POST");
+
+        if (res.status < 300) {
+            enqueueSnackbar( await res.text(), { variant: "success" });
+        }else{
+            enqueueSnackbar( await res.text(), { variant: "error" });
+        }
+        await refresh();
+        setOpenAddFolder(false);
+    }
+
+    const renameFolder = () => {
         setOpenFolderRename(true);
     }
 
-    const renaming = () => {
+    const renaming = async () => {
+        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "PATCH", 
+            {
+                name: rename
+            }
+        );
 
+        if (res.status < 300) {
+            enqueueSnackbar( await res.text(), { variant: "success" });
+        }else{
+            enqueueSnackbar( await res.text(), { variant: "error" });
+        }
+        await refresh();
+        setOpenFolderRename(false);
     }
 
     const upload = () => {
@@ -148,6 +182,8 @@ export default () => {
                     table !== undefined ? 
                         table && table.length !== 0 ? 
                             <FolderTable 
+                                addFolderOpen={addFolderOpen}
+                                renameFolder={renameFolder}
                                 upload={upload} 
                                 refresh={refresh} 
                                 table={table} 
@@ -163,14 +199,14 @@ export default () => {
                                     justifyContent="center"
                                     style={{ minHeight: '70vh' }}
                                 >
-                                    <Grid item xs={3}>
+                                    <Box sx={{display: "flex", flexDirection: "column", textAlign: "center" }}>
                                         <Typography variant="h6" component="div" style={{marginBottom: "5vh"}} >
                                             Folder is empty
                                         </Typography>
-                                        <Button onClick={upload} variant="contained">Upload files</Button>
-                                        <br />
-                                        <Button onClick={rename} variant="contained">Renmae files</Button>
-                                    </Grid>
+                                        <Button sx={{ margin: "5px" }} onClick={upload} variant="contained">Upload files</Button>
+                                        <Button sx={{ margin: "5px" }} onClick={renameFolder} variant="contained">Renmae files</Button>
+                                        <Button sx={{ margin: "5px" }} onClick={addFolderOpen} variant="contained">Add Folder</Button>
+                                    </Box>
                                 </Grid>
                             </>
                         :
@@ -234,12 +270,38 @@ export default () => {
                 }
             </ModalHook>
             <ModalHook open={openFolderRename} setOpen={setOpenFolderRename}>
-
-                <TextField 
-                    id="outlined-basic" 
-                    label="Outlined" 
-                    variant="outlined" 
-                />
+                <Grid>
+                    <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
+                        <TextField
+                            onChange={e => setRename(e.target.value)} 
+                            sx={{ minWidth: "300px" }}
+                            id="outlined-basic" 
+                            label="Rename Folder" 
+                            defaultValue={rename}
+                            variant="outlined" 
+                        />
+                        <Button onClick={renaming} sx={{ margin: "30px" }} variant="contained" component="span">
+                            Submit
+                        </Button>
+                    </Grid>
+                </Grid>
+            </ModalHook>
+            <ModalHook open={openAddFolder} setOpen={setOpenAddFolder}>
+                <Grid>
+                    <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
+                        <TextField
+                            onChange={e => setAddFolder(e.target.value)} 
+                            sx={{ minWidth: "300px" }}
+                            id="outlined-basic" 
+                            label="Rename Folder" 
+                            defaultValue={addFolder}
+                            variant="outlined" 
+                        />
+                        <Button onClick={addingFolder} sx={{ margin: "30px" }} variant="contained" component="span">
+                            Submit
+                        </Button>
+                    </Grid>
+                </Grid>
             </ModalHook>
         </>
     );
