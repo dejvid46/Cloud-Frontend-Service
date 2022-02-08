@@ -7,8 +7,11 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import MusicVideoIcon from '@mui/icons-material/MusicVideo';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import Grid from '@mui/material/Grid';
+import TextField from "@mui/material/TextField";
 
 import { apiFetchDownload } from '../features/Fetch';
+import Modal from './Modal';
 import FolderActions from './FolderActions';
 import { useState } from 'react';
 import { route, fileURL } from '../features/Router';
@@ -119,7 +122,7 @@ const columns: GridColDef[] = [
     {
         field: 'buttons',
         headerName: '',
-        width: 230,
+        width: 340,
         sortable: false,
         renderCell: (params) => {
 
@@ -171,6 +174,22 @@ const columns: GridColDef[] = [
                 <Stack spacing={2} direction="row">
                     <Button onClick={open} variant="outlined">Open</Button>
                     <Button onClick={download} variant="outlined">Download</Button>
+                    <Modal styled={true} buttonText="Rename">
+                        <Grid>
+                            <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
+                                <TextField 
+                                    sx={{ minWidth: "300px" }}
+                                    id="outlined-basic" 
+                                    label="Rename Folder" 
+                                    defaultValue={""}
+                                    variant="outlined" 
+                                />
+                                <Button sx={{ margin: "30px" }} variant="contained" component="span">
+                                    Submit
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Modal>
                 </Stack>
             );
         }

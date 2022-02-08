@@ -135,7 +135,10 @@ export default () => {
     }
 
     const renaming = async () => {
-        const res = await apiFetch(`/folder${folderPath === "" ? "/" : folderPath}`, "PATCH", 
+
+        
+
+        const res = await apiFetch(`/file${folderPath === "" ? "/" : folderPath}`, "PATCH", 
             {
                 name: rename
             }
