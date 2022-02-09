@@ -21,8 +21,7 @@ const actionsCanUpload = [
     { icon: <DeleteIcon />, name: 'Delete' },
     { icon: <DownloadIcon />, name: 'Download' },
     { icon: <FileUploadIcon />, name: 'Upload' },
-    { icon: <CreateNewFolderIcon />, name: 'Add Folder' },
-    { icon: <DriveFileRenameOutlineIcon />, name: 'Rename Folder' }
+    { icon: <CreateNewFolderIcon />, name: 'Add Folder' }
 ];
 
 const actionsCanDownload = [
@@ -35,15 +34,14 @@ interface ActionsProps {
     selectionModel: GridSelectionModel,
     refresh: () => Promise<void>,
     upload: () => void
-    addFolderOpen: () => void,
-    renameFolder: () => void
+    addFolderOpen: () => void
 }
 
 function delay(time: number) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
 
-export default ({table, selectionModel, refresh, upload, addFolderOpen, renameFolder}: ActionsProps) => {
+export default ({table, selectionModel, refresh, upload, addFolderOpen}: ActionsProps) => {
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -65,9 +63,6 @@ export default ({table, selectionModel, refresh, upload, addFolderOpen, renameFo
                 break;
             case "Add Folder":
                 addFolderOpen();
-                break;
-            case "Rename Folder": 
-                renameFolder();
                 break;
             default:
                 break;

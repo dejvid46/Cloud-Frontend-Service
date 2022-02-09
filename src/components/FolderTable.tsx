@@ -10,12 +10,14 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Grid from '@mui/material/Grid';
 import TextField from "@mui/material/TextField";
 
+import { apiFetch } from '../features/Fetch';
 import { apiFetchDownload } from '../features/Fetch';
 import Modal from './Modal';
 import FolderActions from './FolderActions';
 import { useState } from 'react';
 import { route, fileURL } from '../features/Router';
 import { GridSelectionModel } from '@mui/x-data-grid';
+import { useSnackbar } from 'notistack';
 
 function secondsToDhms(seconds: number) {
     seconds = Number(seconds);
@@ -48,157 +50,185 @@ interface TableProps {
     rowsCount: number,
     refresh: () => Promise<void>,
     upload: () => void,
-    addFolderOpen: () => void,
-    renameFolder: () => void
+    addFolderOpen: () => void
 }
 
-const columns: GridColDef[] = [
-    { 
-        field: 'img', 
-        headerName: '', 
-        width: 40,
-        renderCell: (params) => {
-
-            const fileAndPath = (params.getValue(params.id, 'name') || "folder").toString().split(".");
-
-            const type = fileAndPath.length === 1 ? "folder" : fileAndPath[fileAndPath.length - 1];
-      
-            return (
-                <>
-                    {
-                        (
-                            (type === "folder" && (<FolderOpenIcon />)) ||
-                            (type === "jpg" && (<PhotoIcon />)) ||
-                            (type === "png" && (<PhotoIcon />)) ||
-                            (type === "mp3" && (<MusicVideoIcon />)) ||
-                            (type === "ogg" && (<MusicVideoIcon />)) ||
-                            (type === "txt" && (<TextSnippetIcon />)) ||
-                            (type === "docx" && (<TextSnippetIcon />)) ||
-                            (type === "avi" && (<VideocamIcon />)) ||
-                            (type === "mp4" && (<VideocamIcon />)) ||
-                            ((<InsertDriveFileIcon />))
-                        )
-                    }
-                </>
-            );
-        }
-    },
-    { 
-        field: 'name', 
-        headerName: 'Name', 
-        type: 'string', 
-        minWidth: 150
-    },
-    { 
-        field: 'modifiedDate', 
-        headerName: 'Modified', 
-        type: 'string',
-        minWidth: 100,
-        valueGetter: (params: GridValueGetterParams) => {
-            const modifiedStr = (params.getValue(params.id, 'modified') || "").toString();
-
-            const time = parseInt(modifiedStr);
-
-            if (isNaN(time)) return modifiedStr;
-
-            return secondsToDhms(time);
-        }
-    },
-    {
-        field: 'type',
-        headerName: 'Type',
-        type: 'string',
-        valueGetter: (params: GridValueGetterParams) => {
-            const fileAndPath = (params.getValue(params.id, 'name') || "folder").toString().split(".");
-
-            return fileAndPath.length === 1 ? "folder" : fileAndPath[fileAndPath.length - 1];
-        }
-    },
-    {
-        field: 'size',
-        headerName: 'Size',
-        type: 'number',
-    },
-    {
-        field: 'buttons',
-        headerName: '',
-        width: 340,
-        sortable: false,
-        renderCell: (params) => {
-
-            const rowData = () => {
-                const api: GridApi = params.api;
-                const thisRow: Record<string, GridCellValue> = {};
-        
-                api
-                    .getAllColumns()
-                    .filter((c) => c.field !== "__check__" && !!c)
-                    .forEach(
-                    (c) => (thisRow[c.field] = params.getValue(params.id, c.field))
-                );
-
-                return thisRow;
-            }
-
-            const open = (e: any) => {
-                e.stopPropagation(); // don't select this row after clicking
-                
-                const fileType = (params.getValue(params.id, 'name') || "folder").toString().split(".")[1] || "folder";
-
-                let fileUrl = fileURL();
-
-                fileUrl = fileUrl === "/" ? "" : fileUrl;
-
-                if(fileType === "folder"){
-                    route(`showfolder${fileUrl}/${rowData().name}`)
-                }else{
-                    route(`showfile${fileUrl}/${rowData().name}`)
-                }
-            };
-
-            const download = async (e: any) => {
-                e.stopPropagation(); // don't select this row after clicking
-    
-                const fileType = (rowData().name+"").split(".")[1] || "folder";
-
-                let fileUrl = fileURL();
-
-                fileUrl = fileUrl === "/" ? "" : fileUrl;
-    
-                if(fileType !== "folder"){
-                    apiFetchDownload(`/file${fileUrl}/${rowData().name}`, "GET", rowData().name+"");
-                }
-            };
-      
-            return (
-                <Stack spacing={2} direction="row">
-                    <Button onClick={open} variant="outlined">Open</Button>
-                    <Button onClick={download} variant="outlined">Download</Button>
-                    <Modal styled={true} buttonText="Rename">
-                        <Grid>
-                            <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
-                                <TextField 
-                                    sx={{ minWidth: "300px" }}
-                                    id="outlined-basic" 
-                                    label="Rename Folder" 
-                                    defaultValue={""}
-                                    variant="outlined" 
-                                />
-                                <Button sx={{ margin: "30px" }} variant="contained" component="span">
-                                    Submit
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Modal>
-                </Stack>
-            );
-        }
-    }
-];
-
-export default ({ table, rowsCount, refresh, upload, addFolderOpen, renameFolder}: TableProps) => {
+export default ({ table, rowsCount, refresh, upload, addFolderOpen}: TableProps) => {
 
     const [selectionModel, setSelectionModel] = useState<GridSelectionModel>([]);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+    const refresWithSelected = async () => {
+        setSelectionModel([]);
+        await refresh();
+    }
+
+    const columns: GridColDef[] = [
+        { 
+            field: 'img', 
+            headerName: '', 
+            width: 40,
+            renderCell: (params) => {
+    
+                const fileAndPath = (params.getValue(params.id, 'name') || "folder").toString().split(".");
+    
+                const type = fileAndPath.length === 1 ? "folder" : fileAndPath[fileAndPath.length - 1];
+          
+                return (
+                    <>
+                        {
+                            (
+                                (type === "folder" && (<FolderOpenIcon />)) ||
+                                (type === "jpg" && (<PhotoIcon />)) ||
+                                (type === "png" && (<PhotoIcon />)) ||
+                                (type === "mp3" && (<MusicVideoIcon />)) ||
+                                (type === "ogg" && (<MusicVideoIcon />)) ||
+                                (type === "txt" && (<TextSnippetIcon />)) ||
+                                (type === "docx" && (<TextSnippetIcon />)) ||
+                                (type === "avi" && (<VideocamIcon />)) ||
+                                (type === "mp4" && (<VideocamIcon />)) ||
+                                ((<InsertDriveFileIcon />))
+                            )
+                        }
+                    </>
+                );
+            }
+        },
+        { 
+            field: 'name', 
+            headerName: 'Name', 
+            type: 'string', 
+            minWidth: 150
+        },
+        { 
+            field: 'modifiedDate', 
+            headerName: 'Modified', 
+            type: 'string',
+            minWidth: 100,
+            valueGetter: (params: GridValueGetterParams) => {
+                const modifiedStr = (params.getValue(params.id, 'modified') || "").toString();
+    
+                const time = parseInt(modifiedStr);
+    
+                if (isNaN(time)) return modifiedStr;
+    
+                return secondsToDhms(time);
+            }
+        },
+        {
+            field: 'type',
+            headerName: 'Type',
+            type: 'string',
+            valueGetter: (params: GridValueGetterParams) => {
+                const fileAndPath = (params.getValue(params.id, 'name') || "folder").toString().split(".");
+    
+                return fileAndPath.length === 1 ? "folder" : fileAndPath[fileAndPath.length - 1];
+            }
+        },
+        {
+            field: 'size',
+            headerName: 'Size',
+            type: 'number',
+        },
+        {
+            field: 'buttons',
+            headerName: '',
+            width: 340,
+            sortable: false,
+            renderCell: (params) => {
+    
+                const rowData = () => {
+                    const api: GridApi = params.api;
+                    const thisRow: Record<string, GridCellValue> = {};
+            
+                    api
+                        .getAllColumns()
+                        .filter((c) => c.field !== "__check__" && !!c)
+                        .forEach(
+                        (c) => (thisRow[c.field] = params.getValue(params.id, c.field))
+                    );
+    
+                    return thisRow;
+                }
+    
+                const open = (e: any) => {
+                    e.stopPropagation(); // don't select this row after clicking
+                    
+                    const fileType = (params.getValue(params.id, 'name') || "folder").toString().split(".")[1] || "folder";
+    
+                    let fileUrl = fileURL();
+    
+                    fileUrl = fileUrl === "/" ? "" : fileUrl;
+    
+                    if(fileType === "folder"){
+                        route(`showfolder${fileUrl}/${rowData().name}`)
+                    }else{
+                        route(`showfile${fileUrl}/${rowData().name}`)
+                    }
+                };
+    
+                const download = async (e: any) => {
+                    e.stopPropagation(); // don't select this row after clicking
+        
+                    const fileType = (rowData().name+"").split(".")[1] || "folder";
+    
+                    let fileUrl = fileURL();
+    
+                    fileUrl = fileUrl === "/" ? "" : fileUrl;
+        
+                    if(fileType !== "folder"){
+                        apiFetchDownload(`/file${fileUrl}/${rowData().name}`, "GET", rowData().name+"");
+                    }
+                };
+    
+                let rename = rowData().name;
+    
+                const renaming = async () => {
+    
+                    let fileUrl = fileURL();
+    
+                    fileUrl = fileUrl === "/" ? "" : fileUrl;
+    
+                    const res = await apiFetch(`/file${fileUrl}/${rowData().name}`, "PATCH", 
+                        {
+                            name: `${fileUrl}/${rename}`
+                        }
+                    );
+    
+                    if (res.status < 300) {
+                        enqueueSnackbar( await res.text(), { variant: "success" });
+                    }else{
+                        enqueueSnackbar( await res.text(), { variant: "error" });
+                    }
+                    await refresh();
+                }
+          
+                return (
+                    <Stack spacing={2} direction="row">
+                        <Button onClick={open} variant="outlined">Open</Button>
+                        <Button onClick={download} variant="outlined">Download</Button>
+                        <Modal styled={true} buttonText="Rename">
+                            <Grid>
+                                <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
+                                    <TextField 
+                                        sx={{ minWidth: "300px" }}
+                                        id="outlined-basic" 
+                                        label="Rename Folder" 
+                                        defaultValue={rowData().name}
+                                        variant="outlined" 
+                                        onChange={(e) => rename = e.target.value}
+                                    />
+                                    <Button onClick={renaming} sx={{ margin: "30px" }} variant="contained" component="span">
+                                        Submit
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Modal>
+                    </Stack>
+                );
+            }
+        }
+    ];
 
     return (
         <>
@@ -216,8 +246,7 @@ export default ({ table, rowsCount, refresh, upload, addFolderOpen, renameFolder
             />
             <FolderActions 
                 addFolderOpen={addFolderOpen}
-                renameFolder={renameFolder}
-                refresh={refresh}
+                refresh={refresWithSelected}
                 upload={upload}
                 table={table}
                 selectionModel= {selectionModel}

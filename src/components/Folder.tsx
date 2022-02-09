@@ -130,29 +130,6 @@ export default () => {
         setOpenAddFolder(false);
     }
 
-    const renameFolder = () => {
-        setOpenFolderRename(true);
-    }
-
-    const renaming = async () => {
-
-        
-
-        const res = await apiFetch(`/file${folderPath === "" ? "/" : folderPath}`, "PATCH", 
-            {
-                name: rename
-            }
-        );
-
-        if (res.status < 300) {
-            enqueueSnackbar( await res.text(), { variant: "success" });
-        }else{
-            enqueueSnackbar( await res.text(), { variant: "error" });
-        }
-        await refresh();
-        setOpenFolderRename(false);
-    }
-
     const upload = () => {
         setOpenUpload(true);
     }
@@ -186,7 +163,6 @@ export default () => {
                         table && table.length !== 0 ? 
                             <FolderTable 
                                 addFolderOpen={addFolderOpen}
-                                renameFolder={renameFolder}
                                 upload={upload} 
                                 refresh={refresh} 
                                 table={table} 
@@ -207,7 +183,6 @@ export default () => {
                                             Folder is empty
                                         </Typography>
                                         <Button sx={{ margin: "5px" }} onClick={upload} variant="contained">Upload files</Button>
-                                        <Button sx={{ margin: "5px" }} onClick={renameFolder} variant="contained">Renmae files</Button>
                                         <Button sx={{ margin: "5px" }} onClick={addFolderOpen} variant="contained">Add Folder</Button>
                                     </Box>
                                 </Grid>
@@ -272,23 +247,6 @@ export default () => {
                         <></>
                 }
             </ModalHook>
-            <ModalHook open={openFolderRename} setOpen={setOpenFolderRename}>
-                <Grid>
-                    <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
-                        <TextField
-                            onChange={e => setRename(e.target.value)} 
-                            sx={{ minWidth: "300px" }}
-                            id="outlined-basic" 
-                            label="Rename Folder" 
-                            defaultValue={rename}
-                            variant="outlined" 
-                        />
-                        <Button onClick={renaming} sx={{ margin: "30px" }} variant="contained" component="span">
-                            Submit
-                        </Button>
-                    </Grid>
-                </Grid>
-            </ModalHook>
             <ModalHook open={openAddFolder} setOpen={setOpenAddFolder}>
                 <Grid>
                     <Grid item xs={3} sx={{ margin: "auto", minWidth: "300px" }}>
@@ -296,7 +254,7 @@ export default () => {
                             onChange={e => setAddFolder(e.target.value)} 
                             sx={{ minWidth: "300px" }}
                             id="outlined-basic" 
-                            label="Rename Folder" 
+                            label="Add Folder" 
                             defaultValue={addFolder}
                             variant="outlined" 
                         />
