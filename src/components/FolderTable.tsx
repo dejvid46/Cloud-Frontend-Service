@@ -81,6 +81,10 @@ export default ({ table, rowsCount, refresh, upload, addFolderOpen}: TableProps)
                                 (type === "folder" && (<FolderOpenIcon />)) ||
                                 (type === "jpg" && (<PhotoIcon />)) ||
                                 (type === "png" && (<PhotoIcon />)) ||
+                                (type === "jpeg" && (<PhotoIcon />)) ||
+                                (type === "apng" && (<PhotoIcon />)) ||
+                                (type === "svg" && (<PhotoIcon />)) ||
+                                (type === "bmp" && (<PhotoIcon />)) ||
                                 (type === "mp3" && (<MusicVideoIcon />)) ||
                                 (type === "ogg" && (<MusicVideoIcon />)) ||
                                 (type === "txt" && (<TextSnippetIcon />)) ||

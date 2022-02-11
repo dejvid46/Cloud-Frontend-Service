@@ -2,6 +2,10 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 
+import { fileURL } from '../features/Router';
+import { useRecoilValue } from 'recoil';
+import { folderPath as folderPathState } from '../features/Atoms';
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -44,6 +48,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default () => {
+
+    const path = useRecoilValue(folderPathState) || fileURL();
+
     return (
         <>
             <Search>
@@ -53,6 +60,7 @@ export default () => {
                 <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
+                    onAbort={() => console.log("aaaaaa")}
                 />
             </Search>
         </>
