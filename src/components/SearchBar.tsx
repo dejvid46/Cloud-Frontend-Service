@@ -2,6 +2,8 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 
+import { useState } from 'react';
+import { route } from '../features/Router';
 import { fileURL } from '../features/Router';
 import { useRecoilValue } from 'recoil';
 import { folderPath as folderPathState } from '../features/Atoms';
@@ -50,6 +52,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default () => {
 
     const path = useRecoilValue(folderPathState) || fileURL();
+    const [text, setText] = useState("");
+
+    const handleKeyDown = (event: any) => {
+        if (event.key === 'Enter') {
+            route("/"+text);
+        }
+    }
 
     return (
         <>
@@ -58,9 +67,10 @@ export default () => {
                     <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
+                    onChange={e => setText(e.target.value)} 
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
-                    onAbort={() => console.log("aaaaaa")}
+                    onKeyPress={handleKeyDown}
                 />
             </Search>
         </>

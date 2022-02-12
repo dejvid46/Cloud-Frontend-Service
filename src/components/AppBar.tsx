@@ -15,7 +15,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { route } from '../features/Router';
 import { deleteCookie } from '../features/Fetch';
 
-
 export default () => {
 
     const [drawer, setDrawer] = useRecoilState(drawerState);
