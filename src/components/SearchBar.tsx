@@ -49,14 +49,31 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+const getFolderPath = (path: string) => {
+    if (path.includes(".")){
+        const str = path.split("/").slice(0, -1).join("/");
+        return `${str.endsWith("/") ? str : str+"/"}`;
+    }else{
+        return `${path.endsWith("/") ? path : path+"/"}`;
+    }
+}
+
 export default () => {
 
     const path = useRecoilValue(folderPathState) || fileURL();
     const [text, setText] = useState("");
 
     const handleKeyDown = (event: any) => {
+
+        const pretext = text.includes(".") ? "showfile": "showfolder";
+
         if (event.key === 'Enter') {
-            route("/"+text);
+            if (path.includes(".")){
+                route(`./${pretext}${getFolderPath(path)}${text}`);
+            }else{
+                setText("");
+                route(`./${pretext}${getFolderPath(path)}${text}`);
+            }
         }
     }
 
@@ -67,6 +84,7 @@ export default () => {
                     <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
+                    value={text}
                     onChange={e => setText(e.target.value)} 
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
