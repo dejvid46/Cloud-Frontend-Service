@@ -85,27 +85,6 @@ export interface apiTree {
     folders?: readonly apiTree[];
 }
 
-const data: apiTree = {
-    name: '',
-    folders: [
-        {
-            name: 'index.html',
-            folders: []
-        },
-        {
-            name: 'index.php',
-        },
-        {
-            name: 'users',
-            folders: [
-                {
-                        name: 'text.txt',
-                },
-            ],
-        },
-    ],
-}
-
 const CustomTreeItem = (props: TreeItemProps) => (
     <TreeItem ContentComponent={CustomContent} {...props} onClickCapture={() => redirect(props.nodeId)} />
 );

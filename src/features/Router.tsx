@@ -24,6 +24,8 @@ export default ({routes}: RouterProps) => {
         setUrl(window.location.pathname);
     };
 
+    document.title = fileURL().split("/").pop() || "yourCloud";
+
     return (
         <>
             {

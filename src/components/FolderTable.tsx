@@ -79,18 +79,30 @@ export default ({ table, rowsCount, refresh, upload, addFolderOpen}: TableProps)
                         {
                             (
                                 (type === "folder" && (<FolderOpenIcon />)) ||
+
                                 (type === "jpg" && (<PhotoIcon />)) ||
                                 (type === "png" && (<PhotoIcon />)) ||
                                 (type === "jpeg" && (<PhotoIcon />)) ||
                                 (type === "apng" && (<PhotoIcon />)) ||
-                                (type === "svg" && (<PhotoIcon />)) ||
                                 (type === "bmp" && (<PhotoIcon />)) ||
+                                (type === "JPG" && (<PhotoIcon />)) ||
+                                (type === "PNG" && (<PhotoIcon />)) ||
+
                                 (type === "mp3" && (<MusicVideoIcon />)) ||
                                 (type === "ogg" && (<MusicVideoIcon />)) ||
+                                (type === "wav" && (<MusicVideoIcon />)) ||
+
                                 (type === "txt" && (<TextSnippetIcon />)) ||
                                 (type === "docx" && (<TextSnippetIcon />)) ||
-                                (type === "avi" && (<VideocamIcon />)) ||
+                                (type === "js" && (<TextSnippetIcon />)) ||
+                                (type === "rs" && (<TextSnippetIcon />)) ||
+                                (type === "php" && (<TextSnippetIcon />)) ||
+                                (type === "ts" && (<TextSnippetIcon />)) ||
+
                                 (type === "mp4" && (<VideocamIcon />)) ||
+                                (type === "webm" && (<VideocamIcon />)) ||
+                                (type === "ogg" && (<VideocamIcon />)) ||
+
                                 ((<InsertDriveFileIcon />))
                             )
                         }
