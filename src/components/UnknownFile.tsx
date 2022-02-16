@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 
 import { useState, useEffect } from 'react';
 import { apiFetch, apiFetchDownload } from '../features/Fetch';
-import { useSnackbar } from 'notistack';
 
 interface TextProps {
     path: String
@@ -14,7 +13,6 @@ interface TextProps {
 export default ({ path }: TextProps) => {
 
     const [exist, setExist] = useState(false);
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const download = async () => {
         let newPath = path.split("/");
@@ -23,6 +21,9 @@ export default ({ path }: TextProps) => {
     }
 
     const existing = async () => {
+
+        if(!path.includes(".")) return;
+
         const res = await apiFetch(`/file${path}`, "GET");
 
         if (res.status < 300) {

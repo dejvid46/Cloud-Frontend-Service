@@ -8,6 +8,9 @@ import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme({
     palette: {
+        primary: {
+            main: '#0052cc',
+        },
         secondary: {
             main: '#E33E7F'
         }
@@ -21,13 +24,11 @@ function App() {
         <div className="App">
             <CssBaseline/>
             <RecoilRoot>
-                <Suspense fallback>
-                    <ThemeProvider theme={theme}>
-                        <SnackbarProvider maxSnack={4}>
-                            <Router routes={routes} />
-                        </SnackbarProvider>
-                    </ThemeProvider>
-                </Suspense>
+                <ThemeProvider theme={theme}>
+                    <SnackbarProvider maxSnack={4}>
+                        <Router routes={routes} />
+                    </SnackbarProvider>
+                </ThemeProvider>
             </RecoilRoot>
         </div>
     );

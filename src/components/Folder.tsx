@@ -224,7 +224,13 @@ export default () => {
 
                 <label htmlFor="file-upload">
                     <Div>
-                        <Input id="file-upload" onChange={e => setFiles(e.target.files || undefined)} multiple type="file" />
+                        <Input id="file-upload" onChange={e => {
+                            if(e.target.files && e.target.files.length === 0) {
+                                setFiles(undefined)
+                                return;
+                            }
+                            setFiles(e.target.files || undefined)
+                        }} multiple type="file" />
                         {files ? 
                             files.length > 1 ?
                                 `count of files: ${files.length}`    
