@@ -10,7 +10,7 @@ import { folderPath as folderPathState } from '../features/Atoms';
 const videosTypes: string[] = [".mp4", ".webm", ".ogg"];
 const imageTypes: string[] = [".jpg", ".png", ".jpeg", ".gif", ".apng", ".bmp", ".PNG", ".JPG", ".JPEG"];
 const audioTypes: string[] = [".mp3", ".wav", ".ogg"];
-const textTypes: string[] = [".txt", ".js", ".php", ".ts", ".rs", ".go"];
+const textTypes: string[] = [".txt", ".js", ".php", ".ts", ".rs", ".go", ".tsx"];
 
 export default () => {
 

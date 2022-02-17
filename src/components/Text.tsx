@@ -3,8 +3,11 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
 import Loading from './Loading';
+import hljs from 'highlight.js';
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../features/Fetch';
+
+import "highlight.js/styles/agate.css";
 
 interface TextProps {
     path: String
@@ -19,7 +22,7 @@ export default ({ path }: TextProps) => {
             apiFetch(`/file${path}`, "GET")
         ).text()
         .then((text) => {
-            setData(text);
+            setData(hljs.highlight(text, {language: path.split(".").pop() || ""}).value);
         });
     }
 
@@ -40,10 +43,8 @@ export default ({ path }: TextProps) => {
                     >
                         <Paper>
                             <Box sx={{ margin: "20px"}}>
-                                <pre style={{ width: "100%", overflow: "auto"}}>
-                                    {
-                                        data
-                                    }
+                                <pre>
+                                    <code className='hljs' dangerouslySetInnerHTML={{ __html: data}} />
                                 </pre>
                             </Box>
                         </Paper>
