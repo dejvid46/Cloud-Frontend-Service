@@ -194,7 +194,7 @@ export default ({user, key, editable, getUsers}: UserCardProps) => {
                             />
                         </Grid>
                     </Grid>
-                    <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={addUser}>Submit</Button>
+                    <Button sx={{float: "right", marginTop: "20px"}} onClick={addUser}>Submit</Button>
                 </Modal>
                 <Button onClick={deleteUser} disabled={editable} size="small">Delete</Button>
             </CardActions>

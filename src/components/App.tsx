@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Router from '../features/Router';
 import routes from '../routes/mainRoutes';
@@ -9,10 +8,10 @@ import { SnackbarProvider } from 'notistack';
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#0052cc',
+            main: '#E06D06', 
         },
         secondary: {
-            main: '#E33E7F'
+            main: '#161032',
         }
     }
 });

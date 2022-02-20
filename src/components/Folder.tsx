@@ -14,7 +14,7 @@ import { tableData } from './FolderTable';
 import { fileURL } from '../features/Router';
 import { apiFetch, apiFetchUpload } from '../features/Fetch';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { folderPath as folderPathState, folderTree as folderTreeState } from '../features/Atoms';
+import { folderPath as folderPathState, folderTree as folderTreeState, user as userState } from '../features/Atoms';
 import { useSnackbar } from 'notistack';
 
 const Div = styled('div')({
@@ -30,6 +30,24 @@ const Input = styled('input')({
 });
 
 export default () => {
+
+    const [user, setUser] = useRecoilState(userState);
+
+
+    const refreshMe = async () => {
+        const res = await apiFetch("/user", "GET");
+
+        if(res.status >= 300) return;
+
+        setUser(await res.json());
+
+    }
+
+    useEffect(() => {
+        if(Object.keys(user).length === 0) {
+            refreshMe();
+        }
+    }, []);
 
     const folderPath = useRecoilValue(folderPathState) || fileURL();
 
@@ -182,8 +200,14 @@ export default () => {
                                         <Typography variant="h6" component="div" style={{marginBottom: "5vh"}} >
                                             Folder is empty
                                         </Typography>
-                                        <Button sx={{ margin: "5px" }} onClick={upload} variant="contained">Upload files</Button>
-                                        <Button sx={{ margin: "5px" }} onClick={addFolderOpen} variant="contained">Add Folder</Button>
+                                        {user.status <= 3 ?
+                                            <>
+                                                <Button sx={{ margin: "5px" }} onClick={upload} variant="contained">Upload files</Button>
+                                                <Button sx={{ margin: "5px" }} onClick={addFolderOpen} variant="contained">Add Folder</Button>
+                                            </>
+                                        :
+                                            <></>
+                                        }
                                     </Box>
                                 </Grid>
                             </>

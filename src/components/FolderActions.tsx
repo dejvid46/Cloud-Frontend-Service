@@ -1,5 +1,5 @@
 import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import LaunchIcon from '@mui/icons-material/Launch';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -129,7 +129,7 @@ export default ({table, selectionModel, refresh, upload, addFolderOpen}: Actions
 
             if(fileType !== "folder"){
                 apiFetchDownload(`/file${filePath(id)}`, "GET", table[id].name)
-                    .then(_ => enqueueSnackbar("vse ok", { variant: "success" }))
+                    .then(_ => _)
                     .catch(err => enqueueSnackbar(err.text(), { variant: "error" }));
             }
 
@@ -142,7 +142,15 @@ export default ({table, selectionModel, refresh, upload, addFolderOpen}: Actions
                 ariaLabel="SpeedDial basic example"
                 sx={{ position: 'fixed', bottom: 16, right: 16 }}
                 direction="left"
-                icon={<SpeedDialIcon />}
+                icon={<MoreVertIcon />}
+                FabProps={{
+                    sx: {
+                        bgcolor: 'primary.main',
+                        '&:hover': {
+                            bgcolor: 'primary.main',
+                        }
+                    }
+                }}
             >
                 {
                 user.status <= 3 ?

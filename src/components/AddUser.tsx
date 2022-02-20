@@ -124,7 +124,7 @@ export default ({setUsers}: AddUserProps) => {
                     />
                 </Grid>
             </Grid>
-            <Button sx={{float: "right", marginTop: "20px"}} variant="contained" onClick={editUser}>Submit</Button>
+            <Button sx={{float: "right", marginTop: "20px"}} onClick={editUser}>Submit</Button>
         </Modal>
 
     );

@@ -229,7 +229,7 @@ export default ({ table, rowsCount, refresh, upload, addFolderOpen}: TableProps)
                                     <TextField 
                                         sx={{ minWidth: "300px" }}
                                         id="outlined-basic" 
-                                        label="Rename Folder" 
+                                        label="Rename" 
                                         defaultValue={rowData().name}
                                         variant="outlined" 
                                         onChange={(e) => rename = e.target.value}

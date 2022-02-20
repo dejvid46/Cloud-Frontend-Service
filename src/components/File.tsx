@@ -10,7 +10,8 @@ import { folderPath as folderPathState } from '../features/Atoms';
 const videosTypes: string[] = [".mp4", ".webm", ".ogg"];
 const imageTypes: string[] = [".jpg", ".png", ".jpeg", ".gif", ".apng", ".bmp", ".PNG", ".JPG", ".JPEG"];
 const audioTypes: string[] = [".mp3", ".wav", ".ogg"];
-const textTypes: string[] = [".txt", ".js", ".php", ".ts", ".rs", ".go", ".tsx"];
+const textTypes: string[] = [".txt", ".js", ".php", ".ts", ".rs", ".go", ".tsx", ".jsx", ".r"]
+    .concat(".c .cc .c++ .cs .java .ex .lisp .clj .asm .rb .hs .py .ada .awk .bf .hpp .hh .css .html .coffee .dart .pws .sh .erl .fs .hy .kt .julia .jolie .tex .ls .ml .perl .prolog .sass .less .scheme .swift .svelte .vue .vba .yml .json .toml .xml".split(" "));
 
 export default () => {
 

@@ -1,18 +1,18 @@
 import Button from '@mui/material/Button';
-import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 
-import { user as userState } from '../features/Atoms';
+import { user as userState, folderPath as folderPathState } from '../features/Atoms';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../features/Fetch';
 import { useSnackbar } from 'notistack';
+import { fileURL } from '../features/Router';
 
 export default () => {
 
     const [user, setUser] = useRecoilState(userState);
+    const path = useRecoilValue(folderPathState) || fileURL();
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
@@ -50,7 +50,7 @@ export default () => {
         if(Object.keys(user).length === 0) {
             refreshMe();
         }
-    }, []);
+    }, [path]);
 
     return (
         <>
@@ -63,7 +63,7 @@ export default () => {
                             <TextField 
                                 sx={{ margin: "10px" }}
                                 required 
-                                defaultValue={name} 
+                                defaultValue={user.name} 
                                 id="name" 
                                 label="Name" 
                                 variant="standard" 
@@ -73,7 +73,7 @@ export default () => {
                             <TextField 
                                 sx={{ margin: "10px" }}
                                 required 
-                                defaultValue={email} 
+                                defaultValue={user.email} 
                                 id="email" 
                                 label="Email" 
                                 variant="standard"
@@ -83,7 +83,7 @@ export default () => {
                             <TextField 
                                 sx={{ margin: "10px" }}
                                 required 
-                                defaultValue={pass} 
+                                defaultValue={user.pass} 
                                 id="pass" 
                                 label="Password" 
                                 variant="standard"
@@ -91,7 +91,7 @@ export default () => {
                                 onChange={e => setPass(e.target.value)} 
                             />
                         </Box>
-                <Button sx={{ marginTop: "20px" }} variant="contained" onClick={editMe}>Submit</Button>
+                <Button color="primary" sx={{ marginTop: "20px" }} variant="contained" onClick={editMe}>Submit</Button>
             </Box>
         </>
     )
