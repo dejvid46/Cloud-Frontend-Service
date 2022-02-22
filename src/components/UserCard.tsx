@@ -11,6 +11,7 @@ import Modal from './Modal';
 import { useState } from 'react';
 import { apiFetch } from '../features/Fetch';
 import { useSnackbar } from 'notistack';
+import StatusSelector from './StatusSelector';
 
 export interface User {
     id: number;
@@ -120,7 +121,16 @@ export default ({user, key, editable, getUsers}: UserCardProps) => {
                                 </ul>
                                 <ul>
                                     <li key="status">
-                                        Status: {user.status}
+                                        Status: 
+                                        {user.status === 1 ?
+                                            " Admin"
+                                        :user.status === 2 ?
+                                            " OP"
+                                        :user.status === 3 ?
+                                            " Can upload"
+                                        : 
+                                            " Can download"
+                                        }
                                     </li>
                                 </ul>
                             </Grid>
@@ -161,22 +171,11 @@ export default ({user, key, editable, getUsers}: UserCardProps) => {
                                 required 
                                 defaultValue={path} 
                                 id="path" 
-                                label="Path" 
+                                label="Path to root existing folder" 
                                 variant="standard" 
                                 onChange={e => setPath(e.target.value)} 
                             />
-                            <TextField 
-                                required 
-                                defaultValue={status} 
-                                id="status" 
-                                label="Status" 
-                                variant="standard" 
-                                type="number"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} 
-                            />
+                            <StatusSelector status={status} setStatus={setStatus} />
                             <TextField 
                                 required 
                                 defaultValue={size} 

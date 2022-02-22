@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { apiFetch } from '../features/Fetch';
 import { User } from './UserCard';
 import { useSnackbar } from 'notistack';
+import StatusSelector from './StatusSelector';
 
 interface AddUserProps {
     setUsers: React.Dispatch<React.SetStateAction<User[]>>
@@ -21,7 +22,7 @@ export default ({setUsers}: AddUserProps) => {
     const [pass, setPass] = useState("");
     const [size, setSize] = useState(0);
     const [path, setPath] = useState("/");
-    const [status, setStatus] = useState(4);
+    const [status, setStatus] = useState<number>(2);
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -79,6 +80,7 @@ export default ({setUsers}: AddUserProps) => {
                         onChange={e => setEmail(e.target.value)} 
                     />
                     <TextField 
+                        required 
                         defaultValue={pass} 
                         id="pass" 
                         label="Password" 
@@ -91,22 +93,11 @@ export default ({setUsers}: AddUserProps) => {
                         required 
                         defaultValue={path} 
                         id="path" 
-                        label="Path" 
+                        label="Path to root existing folder" 
                         variant="standard" 
                         onChange={e => setPath(e.target.value)} 
                     />
-                    <TextField 
-                        required 
-                        defaultValue={status} 
-                        id="status" 
-                        label="Status" 
-                        variant="standard" 
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        onChange={e => parseInt(e.target.value) ? setStatus(parseInt(e.target.value)) : ""} 
-                    />
+                    <StatusSelector status={status} setStatus={setStatus} />
                     <TextField 
                         required 
                         defaultValue={size} 
