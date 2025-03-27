@@ -1,4 +1,4 @@
-# Cloud Backend Service - Frontend
+# Cloud Frontend Service
 
 ## Overview
 This is the frontend for the Cloud Backend Service. It is built using React and Material-UI, with TypeScript support and state management using Recoil.
