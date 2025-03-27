@@ -1,46 +1,79 @@
-# Getting Started with Create React App
+# Cloud Backend Service - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+This is the frontend for the Cloud Backend Service. It is built using React and Material-UI, with TypeScript support and state management using Recoil.
 
-## Available Scripts
+## Features
+- User authentication (Login page)
+- Folder and file management views
+- User management
+- Notification system using Notistack
+- Uses React Router for navigation
 
-In the project directory, you can run:
+## Tech Stack
+- **React**: Frontend framework
+- **Material-UI**: UI components and icons
+- **Recoil**: State management
+- **TypeScript**: Static typing
+- **React Router**: Routing
 
-### `npm start`
+## Project Structure
+```
+my-app/
+│-- src/
+│   │-- components/          # UI components
+│   │-- features/            # Feature modules
+│   │-- routes/              # Routing logic
+│   │-- App.tsx              # Main application file
+│   │-- index.tsx            # Entry point
+│-- public/
+│-- package.json             # Dependencies and scripts
+│-- tsconfig.json            # TypeScript configuration
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Installation
+To install dependencies, run:
+```sh
+npm install
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Running the Project
+To start the development server:
+```sh
+npm start
+```
 
-### `npm test`
+## Building the Project
+To create a production build:
+```sh
+npm run build
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Routing
+Routes are defined in `mainRoutes.tsx`:
+```tsx
+const routes: Array<Route> = [
+    { name: "/", component: <Login /> },
+    { name: "/showfolder", component: <Main /> },
+    { name: "/showfile", component: <Main /> },
+    { name: "/users", component: <Main /> },
+    { name: "/folder", component: <Main /> },
+    { name: "/login", component: <Login /> },
+    { name: "/edit", component: <Main /> }
+];
+```
 
-### `npm run build`
+## Dependencies
+Key dependencies from `package.json`:
+- **React** (`17.0.2`)
+- **Material-UI** (`@mui/material`, `@mui/icons-material`)
+- **Recoil** (`0.4.1`)
+- **TypeScript** (`4.4.2`)
+- **Notistack** (`2.0.3`)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Proxy Configuration
+The frontend is configured to use a proxy:
+```json
+"proxy": "http://0.0.0.0:80"
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
